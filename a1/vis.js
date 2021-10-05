@@ -10,10 +10,11 @@ const Props = {
  * Basic sizes and Elements
  * @type {number}
  */
-const margin = 60;
+const margin = 100;
 const height = 500 - margin*2;
 const width = 1000 - margin*2;
-const svgElement = d3.select("#bar-chart").append("g").attr("transform", `translate(${margin}, ${margin})`);
+const svgElement = d3.select("#bar-chart");
+const barChart = svgElement.append("g").attr("transform", `translate(${margin}, ${margin})`);
 
 /**
  *
@@ -31,24 +32,76 @@ async function getData() {
  *
  * @param range
  * @param callback
+ * @param data
  * @returns {Promise<*>}
  */
-async function calculateScale(range, callback) {
-    const data = await getData();
+async function calculateScale(range, data, variant) {
+    if (variant === "y")
+        return d3.scaleLinear()
+            .range(range)
+            .domain([0, data[data.length-1]])
+
     return d3.scaleBand()
         .range(range)
-        .domain(callback(data))
+        .domain(data)
         .padding(0.2);
 }
 
 /**
- * Y Axis
+ *
+ * @param data
+ * @param xScale
+ * @param yScale
  */
-calculateScale([height, 0], (data) => [...data.map(d => d[Props.gdp]), "0"].sort((a, b) => a - b))
-    .then(scale => svgElement.append("g").call(d3.axisLeft(scale)))
+function drawCharts(data, xScale, yScale) {
+    barChart.selectAll()
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("x", d => xScale(d[Props.state]))
+        .attr("y", d => yScale(d[Props.gdp]))
+        .attr("height", d => height - yScale(d[Props.gdp]))
+        .attr("width", d => xScale.bandwidth())
+}
 
 /**
- * X Axis
+ *
  */
-calculateScale([0,width], (data) => data.map(d => d[Props.state]))
-    .then(scale => svgElement.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(scale)));
+(async function() {
+    const data = await getData();
+
+    /**
+     * Y-Axis
+     * @type {*}
+     */
+    const yScale = await calculateScale([height, 0], [...data.map(d => d[Props.gdp]), "0"].sort((a, b) => a - b), "y");
+    barChart.append("g").call(d3.axisLeft(yScale))
+
+    /**
+     * X Axis
+     * @type {*}
+     */
+    const xScale = await calculateScale([0,width],  data.map(d => d[Props.state]), "x");
+    barChart.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(xScale));
+
+    /**
+     * Draw Data
+     */
+    drawCharts(data, xScale, yScale);
+
+    /**
+     * Add Labels
+     */
+    svgElement.append("text")
+        .attr("x", -(height / 2) - margin)
+        .attr("y", 20)
+        .attr("transform", "rotate(-90)")
+        .attr("text-anchor", "middle")
+        .text("Nominal GDP (millions of $)")
+
+    svgElement.append('text')
+        .attr("x", width / 2 + margin)
+        .attr("y", 450)
+        .attr("text-anchor", "middle")
+        .text("States")
+}());

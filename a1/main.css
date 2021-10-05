@@ -9,7 +9,9 @@ body {
 }
 
 .centered-container {
+    height: 100vh;
     display: flex;
-    flex-direction: row;
-    justify-items: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
