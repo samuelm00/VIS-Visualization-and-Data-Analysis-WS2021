@@ -31,8 +31,8 @@ async function getData() {
 /**
  *
  * @param range
- * @param callback
  * @param data
+ * @param variant
  * @returns {Promise<*>}
  */
 async function calculateScale(range, data, variant) {
@@ -82,7 +82,9 @@ function drawCharts(data, xScale, yScale) {
      * @type {*}
      */
     const xScale = await calculateScale([0,width],  data.map(d => d[Props.state]), "x");
-    barChart.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(xScale));
+    barChart.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale));
 
     /**
      * Draw Data
