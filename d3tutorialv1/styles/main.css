@@ -1,0 +1,43 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body{
+  font-family: Helvetica, Verdana, Georgia, sans-serif;
+  margin: 20px;
+}
+h4{
+  font-size: 80%;
+  font-style: italic;
+  font-weight: normal;
+  margin-bottom: 40px;
+}
+a:link { /* unvisited link */
+  color: #5877c4;
+}
+a:visited { /* visited link */
+  color: #9d58c4;
+}
+button{
+  color: #fff;
+  background-color: #5877c4;
+  border-style: none;
+  padding: 5px 20px;
+  margin: 5px;
+  cursor: pointer;
+}
+.header{
+  display: flex;
+  justify-content: center
+}
+
+.code{
+  font-family: "Courier New", Courier, monospace;
+  word-break: break-all;
+}

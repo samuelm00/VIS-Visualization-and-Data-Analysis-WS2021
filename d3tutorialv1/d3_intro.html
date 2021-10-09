@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <title>D3 Introduction</title>
+  <div class="header">
+    <a href="debugging.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="d3_selection.html"><button>next</button></a>
+  </div>
+</head>
+
+<body>
+  <h1>D3 Introduction</h1>
+  <h4>d3_introduction.html &#9679; d3.min.js</h4>
+
+  <h3> D3 and Version </h3>
+  In the beginning we have seen some examples of d3-graphs. Now we will start to work on graphs on our own. But remember: We are using <b> D3 v6.7.0 </b>in this course. Please be aware of that. Older versions of D3 are not compatile with this version. So always look for D3V6 if you browse the internet! If you are unsure, just use the <span class="code">d3.min.js</span>-file from this project folder.
+
+  <h3> Recap SVG </h3>
+  <p>
+    Remember the SVG we had at the beginning: This one is plain HTML:
+    </p>
+
+    <svg width="400" height="200">
+      <rect x="0" y="0" width="75" height="75" fill="yellow" />
+      <line x1="0" y1="0" x2="400" y2="200" stroke="black" stroke-width="3" />
+      <ellipse cx="250" cy="150" rx="30" ry="50" fill="red" />
+      <text x="100" y="100" fill="green">Sample text</text>
+    </svg>
+
+    <p>
+      But we can build the same also with D3: (look at the code)
+      </p>
+
+      <script src="./scripts/d3.min.js"></script>
+      <svg id="d3svg" width="400" height="200"/>
+      <script type="text/javascript">
+        let svg = d3.select("#d3svg")
+
+        svg.append("rect")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("width", 75)
+          .attr("height", 75)
+          .attr("fill","yellow")
+
+        svg.append("line")
+          .attr("x1",0)
+          .attr("y1",0)
+          .attr("x2",400)
+          .attr("y2",200)
+          .attr("stroke","black")
+          .attr("stroke-width","3")
+
+        svg.append("ellipse")
+          .attr("cx",250)
+          .attr("cy",150)
+          .attr("rx",30)
+          .attr("ry",50)
+          .attr("fill","red")
+
+        svg.append("text")
+          .attr("x", 100)
+          .attr("y", 100)
+          .attr("fill","green")
+          .text("Sample text")
+      </script>
+
+      <h3> What did we do? </h3>
+      <p> The first thing was to put the d3-library file into our project folder and link it to our HTML:</p>
+      <p class="code"> &lt;script src="./scripts/d3.min.js"&gt;&lt;/script&gt;</p>
+      Then we created an empty SVG with the id="d3svg", in which we will later bind the elements.
+      After that we opened a script-tag to write Code into our HTML-file.
+      <br> <br>
+      <p>With <span class="code">d3.select </span> we selected the SVG we've created (The selection works in the same way as we learned it with CSS) and saved it into a variable. With <span class="code">.append() </span> we added Child-Tags to it. And we can add attributes to these tags with <span class="code">.attr()</span>. With this we have created exactly the same SVG as before. Only dynamically with D3, easy, isn't it?
+
+        <h3> More about D3 </h3>
+        <ul>
+          <li>
+            <a href="https://d3js.org">Data Driven Documents (D3)</a>
+          </li> <br/>
+          <li>
+            <a href="https://github.com/d3/d3/wiki">D3 Documentation</a>
+          </li> <br/>
+        </ul>
+
+</body>
+</html>

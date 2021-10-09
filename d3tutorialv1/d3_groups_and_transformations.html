@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <script src="./scripts/d3.min.js"></script>
+  <title>D3 Groups and tranformations</title>
+  <div class="header">
+    <a href="d3_axis.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="d3_interaction.html"><button>next</button></a>
+  </div>
+</head>
+
+<body>
+  <h1>Groups and transformations</h1>
+  <h4>d3_groups_and_transformations.html &#9679; d3.min.js &#9679; data/fruit.csv</h4>
+
+
+  <h3> append("g")</h3>
+  <p>
+    In the fruits-example we have now two elements which belong together: the fruits and the axis. If we now manipulate their position (e.g. adding another axis on the left side) we would like to do that in one transformation for the axis and fruits at once.
+    <br/> <br/>
+    SVGs provide the group element via the tag "g" to allow for group-wise manipulation of elements. Transformations can be applied to the group element (as to basic shapes) and affect all its children.
+
+  </p>
+
+  <p class="code">
+    //Add the group and translate it<br/>
+    let diagram = svg.append("g").attr("transform","translate(20,0)") <br/><br/>
+    //Appends the fruits to the group <br/>
+    diagram.selectAll("fruits")<br/>
+    .data(data)<br/>
+    .enter()<br/>
+    .append("circle") (...)<br/><br/>
+    //Appends the axis to the group <br/>
+    diagram.append("g").call(axisX) (...)<br/><br/>
+
+
+  </p>
+  <h3> Example </h3>
+  <p>
+    If you look at the code, it works exactly as we aspected:
+  </p>
+
+  <!-- First create the SVG -->
+  <svg width="600" height="200" id="firstvis"></svg>
+  <script>
+
+    let svg = d3.select("#firstvis"); //Select and create a variable for the SVG
+    let diagram = svg.append("g").attr("transform","translate(20,0)")
+
+    //Add a title
+    svg.append("text")
+    .text("Fruits")
+    .attr("y",20)
+    .attr("x",125)
+    .style("font-weight","bold")
+
+    d3.csv("./data/fruit.csv") //Load the data
+    .then(data => { //wait for that the data is loaded
+      data.forEach(d => { //convert the strings to numbers
+        d.size = +d["size"];
+        d.weight = +d.weight;
+        d.pricePerKg = +d.pricePerKg;
+      });
+      console.log(data) //output the converted data
+
+      /* SCALES */
+      let maxWeight = d3.max(data, function(d){ //Maximum weight of all fruits
+        return d.weight; //We only evaluate the weight.
+      });
+      let scaleX = d3.scaleLinear()
+      .domain([0, maxWeight])
+      .range([0, 550]); // 550 is the value I set for the maximum width
+
+      /* PLOT DATA */
+      diagram.selectAll("fruits") //select all Fruits, you can choose a name for this group
+      .data(data) //bind the data
+      .enter() //create those elements, we don't have right now
+      .append("circle") //append circles
+      .attr("cy",100) //set y-coordinate
+      .attr("cx",(d,i) => scaleX(d.weight)) //set x-coordinate depending on the index
+      .attr("r", d => d.size) //set radius depending on the size
+      .attr("fill", d => d.color) //set color depening on the color
+
+      /* AXIS */
+      let axisX = d3.axisBottom() //define an axis on the bottom
+
+      axisX.scale(scaleX) //bind the axis to the scale
+
+      diagram.append("g").call(axisX)
+      .attr("transform","translate(0,150)") //we just move the axis to the bottom of our SVG
+
+
+    })
+  </script>
+
+  <h3>More about transformations</h3>
+  <ul>
+    <li>
+      <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/transform">List of transformations</a> <br/>
+    </li>
+  </ul>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <script src="./scripts/d3.min.js"></script>
+  <title>D3 Basic Functions</title>
+  <div class="header">
+    <a href="d3_intro.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="d3_data.html"><button>next</button></a>
+  </div>
+  <style>
+    .div-append{
+      background-color: lightgray;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>D3 Basic Functions</h1>
+  <h4>d3_selection.html &#9679; d3.min.js</h4>
+
+
+  <h3> select() and selectAll() </h3>
+  <p> To choose which objects to manipulate, D3 provides the <span class="code">select("mySelector") </span>method, which returns the first element in your document to match the selector, and the <span class="code">selectAll("mySelector")</span> method that returns all elements matching the selector. You can select elements by various criteria, the most important ones being by tag, by class, and by id.
+    <br/>
+    <br/>
+    Now we have this SVG here and we want to select some of the elements:
+  </p>
+  <svg id="d3svg" width="400" height="200"/>
+  <script type="text/javascript">
+    let svg = d3.select("#d3svg")
+
+    svg.append("rect")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 75)
+    .attr("height", 75)
+    .attr("fill","yellow")
+
+    svg.append("rect")
+    .attr("x", 100)
+    .attr("y", 0)
+    .attr("width", 75)
+    .attr("height", 75)
+    .attr("fill","yellow")
+
+    svg.append("rect")
+    .attr("x", 200)
+    .attr("y", 0)
+    .attr("width", 75)
+    .attr("height", 75)
+    .attr("fill","yellow")
+    .attr("id", "rectID")
+
+    svg.append("text")
+    .attr("x", 100)
+    .attr("y", 100)
+    .attr("fill","green")
+    .text("Sample text")
+    .attr("class","sample_text")
+  </script>
+  <p>
+    In the code you can find these selections:
+  </p>
+  <img src="images/select.png" width="400px"/>
+  <p>
+    And now look what happens, when we click the <button onclick="run()">Run</button> Button. We have selected the different elements and changed their attributes. And we have learned something new: rounded corners!
+  </p>
+  <script type="text/javascript">
+    function run(){
+      d3.select("rect") //Select the first Rectangle
+      .attr("fill","green")
+
+      d3.selectAll("rect") //Select all Rectangles
+      .attr("stroke","black")
+      .attr("stroke-width","3")
+
+      d3.select("#rectID") //Select with ID
+      .attr("ry",20)
+      .attr("rx",20)
+
+      d3.select(".sample_text") //Select with class
+      .attr("fill","blue")
+    }
+  </script>
+
+
+
+  <h3> More about Selections </h3>
+  <ul>
+    <li>
+      <a href="https://github.com/d3/d3/blob/main/API.md#selections-d3-selection">D3 Selections</a>
+    </li> <br/>
+  </ul>
+
+
+
+  <h3>append()</h3>
+  <p>We have already used this method and works as expected. This method can be called on the return value of the select() or selectAll() and simply adds new elements as children to the selected nodes.
+    <br/> <br/>
+
+    The parameter we pass to the append() method is a string defining the type of element we want to add. E.g.: div, p, svg, a, h1,... Some elements might be addressed via their namespace-prefix, e.g.: svg:circle. This method works not only for SVG elements, but for all HTML-tags.
+    <br/>
+  </p>
+
+  <img src="images/append.png" width="250px"/>
+  <p> Here is an example: We select this gray DIV down here and append text, and with text we define the text. If you can click the button you can see what happens, you can do it even multiple times.
+  </p>
+  <div class="div-append">DIV </div>
+  <script type="text/javascript">
+    function append(){
+      d3.select(".div-append")
+      .append("text")
+      .text("Appended Text ")
+    }
+  </script>
+  <button onclick="append()">Run</button>
+
+
+
+  <h3> Method chaining </h3>
+  <p>
+    As we have already seen, JavaScript allows us to call functions in a very compact way, via method chaining. This enables us to call multiple functions (on the same object) consecutively:
+  </p>
+  <p class="code">
+    d3.select("body").append("div").text("Hello World!");
+  </p>
+  <p>
+    Method calls are connected with periods and the output of each method is used as the input for the next one.
+  </p>
+
+
+
+  <h3> attr() and style()</h3>
+  <p>
+    Each element you select can be modified with certain attributes like class, id, etc., and CSS styles, like color, stroke, opacity, etc. To set these values D3 offers the .attr(name, value) and the .style(name, value): For example we can give all our divs the same class and change their text color:
+    </p>
+    <p class="code">
+      d3.selectAll("div").attr("class","myDivClass");   d3.selectAll(".myDivClass").style("color","orange");
+    </p>
+
+    <p> <b>Example:</b> As an example look at the SVG on top of this page.
+
+    <h3> More about attr() and style() </h3>
+    <ul>
+      <li>
+        <a href="https://github.com/d3/d3-selection/blob/v3.0.0/README.md#selection_attr">D3 attr()</a>
+      </li> <br/>
+      <li>
+        <a href="https://github.com/d3/d3-selection/blob/v3.0.0/README.md#selection_style">D3 style()</a>
+      </li> <br/>
+      <li>
+        <a href="https://www.w3schools.com/cssref/default.asp">List of all Styles on w3schools</a>
+      </li> <br/>
+    </ul>
+
+
+
+</body>
+</html>

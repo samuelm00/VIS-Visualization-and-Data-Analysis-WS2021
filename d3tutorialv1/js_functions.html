@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <title>CSS</title>
+  <div class="header">
+    <a href="js_datatypes.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="js_hashes.html"><button>next</button></a>
+  </div>
+</head>
+
+<body>
+  <h1>JavaScript Functions</h1>
+  <h4>js_functions.html</h4>
+
+  <h3> About Functions </h3>
+  <p>
+    Functions can be defined either using function declarations or function expressions.
+    <br/> <br/>
+    Function expressions can be stored in variables, can be used as anonymous functions (e.g. as function parameters), and can be returned by higher-order functions.
+
+  </p>
+
+  <img src="images/js/functions.png" width="600px"/>
+
+
+  <h3> Callbacks: functions as parameters</h3>
+  <p>
+    Like any other object and every primitive, functions can be passed to other functions as parameters.
+  </p>
+  <img src="images/js/callback.png" width="800px"/>
+
+
+
+  <h3> Array Functions</h3>
+  <p>
+    JavaScript offers a range of functions to transform arrays. The outputs of these transformations are either arrays or primitives. The most important array functions are:
+    <ul>
+      <li><b>map(): </b> apply a function to each element of an array and store the outputs in a new array.
+      </li><br/>
+      <li><b>filter():</b> select values that fulfill a condition (predicate) and store them in a new array.
+      </li><br/>
+      <li><b>
+        reduce(): </b>reduce an array to a single value.
+      </li>
+    </ul>
+  </p>
+
+  <h3> Function: map()</h3>
+  <p>
+    Syntax: <p class="code">array.map(callback(currentValue [, index]));</p>
+    <br/>
+    Callback parameters:
+    <ul>
+      <li>
+        <b>currentValue:</b> the current array element
+      </li>
+      <br/>
+      <li>
+        <b>index:</b> the index of the current array element (optional)
+      </li>
+      </ul>
+    </p>
+
+    <img src="images/js/map.png" width="600px"/>
+
+    <h3> Function: filter()</h3>
+    <p>
+      Syntax: <p class="code">array.filter(callback(currentValue [, index]));</p>
+      <br/>
+      Callback parameters:
+      <ul>
+        <li>
+          <b>currentValue:</b> the current array element
+        </li>
+        <br/>
+        <li>
+          <b>index:</b> the index of the current array element (optional)
+        </li>
+        </ul>
+        <br/>
+        The callback’s return value is interpreted as a true or false.
+      </p>
+
+      <img src="images/js/filter.png" width="600px"/>
+
+      <h3> Function: reduce()</h3>
+      <p>
+        Syntax: <p class="code">array.reduce(callback(accumulator, currentValue [, index]), initValue);</p>
+        <br/>
+        Callback parameters:
+        <ul>
+          <li>
+            <b>accumulator:</b> accumulates the callback’s return values. Initialized by <i>initValue</i>.
+          </li>
+          <br/>
+          <li>
+            <b>currentValue:</b> the current array element
+          </li>
+          <br/>
+          <li>
+            <b>index:</b> the index of the current array element (optional)
+          </li>
+          </ul>
+        </p>
+
+        <img src="images/js/reduce.png" width="600px"/>
+
+    <p>
+      <a href="js_hashes.html"><button>Go to JavaScript Hashes</button></a>
+    </p>
+
+    <h3> More about JS </h3>
+    <ul>
+      <li>
+        <a href="https://www.w3schools.com/js/default.asp">JS Tutorial on www.w3schools.com</a> <br/>
+      </li>
+      <li>
+        <a href="https://developer.mozilla.org/de/docs/Web/JavaScript"> JS Tutorial from Mozilla </a> <br/>
+      </li>
+      <li>
+        <a href="https://eloquentjavascript.net/">Eloquent JavaScript (book on modern JS programming) </a> <br/>
+      </li>
+      <li>
+        <a href="https://codepen.io/"> Codepen (playground for experimenting with JS/HTML/CSS) </a> <br/>
+      </li>
+      <li>
+        <a href="https://www.enki.com/#app"> Enki (JS workouts on your phone) </a> <br/>
+      </li>
+    </ul>
+
+  </body>
+  </html>

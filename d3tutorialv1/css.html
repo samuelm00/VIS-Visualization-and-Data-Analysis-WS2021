@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS</title>
+  <a href="svg.html"><button>back</button></a>
+  <a href="index.html"><button>Table of Contents</button></a>
+  <a href="css_2.html"><button>next</button></a>
+
+  <style>
+    svg{
+      width:400px;
+      height:200px;
+    }
+    rect{
+      fill: yellow;
+      width: 75px;
+      height: 75px;
+    }
+    .line-class{
+      stroke: black;
+      stroke-width: 3px;
+    }
+    ellipse{
+      fill: red;
+    }
+    #text1{
+      fill: green;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Cascading Style Sheets (CSS) (Part 1)</h1>
+  <h4>css.html</h4>
+
+  <h3> About CSS </h3>
+  <p>
+    Everything until now was plain HTML. Now we want to add styling, what we do with CSS. Let's take the SVG from before, we have already added some stylings, like the color of the elements or the stroke-width of the line.
+    <br/><br/>
+  </p>
+
+  <svg>
+    <rect x="0" y="0"/>
+    <line x1="0" y1="0" x2="400" y2="200" class="line-class" />
+    <ellipse cx="250" cy="150" rx="30" ry="50" />
+    <text x="100" y="100" id="text1">Sample text</text>
+  </svg>
+
+  <p>
+    This SVG looks like the one before, but all the styles are now in the style-tag in the head-tag. Look at the code!
+  </p>
+
+  <h3>CSS Selectors</h3>
+  <p>
+    To associate the styles with the individual HTML tags, we can use various selectors:
+    <ul>
+      <li>
+        <b>.class </b>- A dot before the name creates a CSS class that can be added to different elements with a class="classname" attribute.
+      </li>
+      <br/>
+      <li>
+        <b>#id </b> - A hash accesses an element that has a specific id that can be added with an ID attribute: id="element-id".
+      </li>
+      <br/>
+      <li>
+        <b>element</b> - selects all tags with the name. e.g. p selects all p-tags
+      </li>
+    </ul>
+    <a href="https://www.w3schools.com/cssref/css_selectors.asp">There are some more advanced things you can do with selectors </a>
+  </p>
+
+  <br/>
+  <a href="css_2.html"><button>Go to CSS Part 2</button></a>
+
+  <h3> More about CSS </h3>
+  <a href="https://www.w3schools.com/cssref/default.asp">CSS Tutorial on www.w3schools.com</a> <br/>
+
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <script src="./scripts/d3.min.js"></script>
+  <title>D3 Loading Data</title>
+  <div class="header">
+    <a href="d3_data.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="d3_first_vis.html"><button>next</button></a>
+  </div>
+</head>
+
+<body>
+  <h1>Loading Data</h1>
+  <h4>d3_loading_data.html &#9679; d3.min.js &#9679; data/fruit.csv</h4>
+
+
+  <h3>Loading data</h3>
+  <p>
+    D3 also allows us to load real data in various formats; in this tutorial we will use a .csv file.
+  </p>
+  <p>
+    D3 uses the <a href="(https://github.com/d3/d3-fetch">Fetch-API</a> which allows loading and parsing of data files such as CSV, JSON and TSV. This type of call returns a promise where the loaded data can be used after a <span class="code">.then(function(data){ })</span> function and the error handling can be done inside <span class="code">.catch(function(error){ })</span>
+    <p class="code">
+      d3.csv("fruit.csv")<br/>.then(data => console.log(data))<br/>.catch(error => console.log(error));
+    </p>
+    <script>
+      function load(){
+        d3.csv("./data/fruit.csv").then(data => console.log(data)).catch(error => console.log(error));
+      }
+    </script>
+    <button onclick="load()">Run</button> Note: The output will be in the console.
+    <p>
+      D3 loads data asynchronously, so that interaction with the browser is not hampered while loading (scripts not related to the data can still run in the meantime). To signal that the loading is complete, D3 calls the .then(data => { }) function.
+      This is an important concept, as it means for developers that code which depends on the data should only exist inside the <span class="code">.then(data => { })</span> function.
+    </p>
+
+    <h3>Converting data</h3>
+
+    <p>
+      D3 loads all our data as strings, so we have to convert it to numbers to work with it. This can be done with the "+" operator.
+    </p>
+    <p class="code">
+      data.size = +data.size;
+    </p>
+    <p>
+      But as this has to be done for every item in the data set, you have to iterate over all items, either by using a loop or with the following statement:
+
+    </p>
+    <p class="code">
+      data.forEach(d => d.size = +d["size"]);
+    </p>
+
+    <script>
+      function loadAndConvert(){
+        d3.csv("./data/fruit.csv").then(data => {
+          data.forEach(d => {
+            d.size = +d["size"];
+            d.weight = +d.weight;
+            d.pricePerKg = +d.pricePerKg;
+          });
+          console.log(data)
+        })
+      }
+    </script>
+    <button onclick="loadAndConvert()">Run</button>
+
+  </body>
+  </html>

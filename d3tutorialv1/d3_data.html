@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <script src="./scripts/d3.min.js"></script>
+  <title>D3 Bind data to HTML elements</title>
+  <div class="header">
+    <a href="d3_selection.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="d3_loading_data.html"><button>next</button></a>
+  </div>
+  <style>
+    .div-append{
+      background-color: lightgray;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bind data to HTML elements</h1>
+  <h4>d3_data.html &#9679; d3.min.js</h4>
+
+  <h3>data()</h3>
+  <p>
+    For data visualization it is, of course, necessary to be able to access data. For now we will work with static data we hard-code in our HTML file. Inside the script tag, define a JavaScript array:
+  </p>
+  <p class="code">
+    const data = [10, 12, 15, 18, 25];
+  </p>
+  <p>
+    We can bind this data to HTML elements using the .data(data) method after the selection.
+  </p>
+  <p class="code">
+    d3.selectAll("p").data(data).append("text").text(" 123 ")
+  </p>
+  <p>
+    So now if we have the same number of items in our array as we have paragraphs, each of the paragraphs get its text set.
+  </p>
+  <p>
+    And that code is also executed here. So we have "123" behind all p-tags. But what if we don't want to create the elements beforehand? That's where the enter-function comes into place:
+  </p>
+
+  <script>
+    const data = [10, 12, 15, 18, 25];
+    d3.selectAll("p").data(data).append("text").text(" 123 ").enter();
+  </script>
+
+
+  <h3>enter()</h3>
+  <p>
+    Usually we don’t want to create our elements beforehand so that they match the number of data-items in our array. That’s why d3 provides the .enter() method that tells the browser what to do if there are not enough HTML-elements for the number of data items. ( .enter() will be explained more thoroughly later in the tutorial)
+  </p>
+  <p>
+    Consequently, we can use the following code to create paragraphs on the fly if we do not already have enough in our document.
+  </p>
+  <p class="code">
+    d3.select("#enterarea").selectAll("samples").data(data).enter().append("p").text("Sample text");
+  </p>
+  <button onclick="enter()">Run</button>
+  <p>
+    This is an important concept in D3, as it lets us select elements which do not yet exist.
+    We can try it: Push the button, and you can see, that we create for each data element one text:
+  </p>
+  <p id="enterarea" class="div-append">#enterarea</p>
+  <script>
+    function enter(){
+      d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text(" Sample text");
+    }
+  </script>
+
+
+  <h3>Anonymous functions </h3>
+  <p>
+    But we also want our changes to be dependent on the different data-items. For this we can use functions, a concept you should be familiar with from other languages. In D3 we often use anonymous functions that only differ from normal functions by not having a name, and which thus cannot be reused.
+  </p>
+  <p class="code">
+    d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text(d => d);
+  </p>
+  <button onclick="anon1()">Run</button>
+  <script>
+    function anon1(){
+      d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text(d => d);
+    }
+  </script>
+  <p>
+    The known equivalent to this would be:
+  </p>
+  <p class="code">
+    d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text(function(d) {return d;});
+  </p>
+  <button onclick="anon2()">Run</button>
+  <script>
+    function anon2(){
+      d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text(function(d) {return d;});
+    }
+  </script>
+  <p>
+    The parameter d is provided as first argument to anonymous functions by D3 and holds the data elements. Optionally, you can also pass the index of the data-item as second parameter to your functions.
+  </p>
+  <p class="code">
+    d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text((d,i) => i)
+  </p>
+
+  <button onclick="anon3()">Run</button>
+  <script>
+    function anon3(){
+      d3.select("#enterarea").selectAll("samples").data(data).enter().append("text").text((d,i) => i)
+    }
+  </script>
+
+
+
+
+</body>
+</html>

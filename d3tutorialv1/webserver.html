@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <title>Webserver</title>
+  <div class="header">
+    <a href="js_hashes.html"><button>back</button></a>
+    <a href="index.html"><button>Table of Contents</button></a>
+    <a href="debugging.html"><button>next</button></a>
+  </div>
+</head>
+
+<body>
+  <h1>Working on your local web server</h1>
+  <h4>webserver.html</h4>
+
+  <h3> About Webserver </h3>
+  <p>
+    Now, before we can use JavaScript and continue with D3, we need to install and run a local web server on our computer. Browsers have very strict access to the local file system. The <a href="https://en.wikipedia.org/wiki/Same-origin_policy">same-origin policy</a> prevents foreign scripts from running and protects us from malicious programmes. Therefore, we need to run a local web server to be able to continue working in the following.
+    <br/><br/>
+    You now have several possibilities to install a webserver:
+
+    <ul>
+      <li>
+        via Python: <a href="https://www.pythonforbeginners.com/modules-in-python/how-to-use-simplehttpserver" > SimpleHttpServer</a>
+        <br/>
+        So if you have Python already installed on your machine: Open a Terminal, go to the Project-folder and type: <br/>
+        <p class="code">
+          python -m SimpleHTTPServer
+        </p>
+      </li><br/>
+      <li>
+        via npm/brew: <a href="https://www.npmjs.com/package/http-server">HTTP Server</a>
+        <p class="code">npm install --global http-server</p>
+        <p class="code">brew install http-server</p>
+      </li><br/>
+      <li>
+        via npm: <a href="https://www.npmjs.com/package/live-server">Live Server (with live-reload)</a>
+        <p class="code">npm install -g live-server</p>
+      </li>
+    </ul>
+  </p>
+</body>
+</html>
