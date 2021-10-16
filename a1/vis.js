@@ -50,18 +50,18 @@ async function calculateScale(range, data, variant) {
 /**
  *
  * @param data
- * @param xScale
- * @param yScale
+ * @param xAxis
+ * @param yAxis
  */
-function drawCharts(data, xScale, yScale) {
+function drawCharts(data, xAxis, yAxis) {
     barChart.selectAll()
         .data(data)
         .enter()
         .append("rect")
-        .attr("x", d => xScale(d[Props.state]))
-        .attr("y", d => yScale(d[Props.gdp]))
-        .attr("height", d => height - yScale(d[Props.gdp]))
-        .attr("width", d => xScale.bandwidth())
+        .attr("x", d => xAxis(d[Props.state]))
+        .attr("y", d => yAxis(d[Props.gdp]))
+        .attr("height", d => height - yAxis(d[Props.gdp]))
+        .attr("width", d => xAxis.bandwidth())
 }
 
 /**
@@ -74,22 +74,24 @@ function drawCharts(data, xScale, yScale) {
      * Y-Axis
      * @type {*}
      */
-    const yScale = await calculateScale([height, 0], [...data.map(d => d[Props.gdp]), "0"].sort((a, b) => a - b), "y");
-    barChart.append("g").call(d3.axisLeft(yScale))
+    const yAxis = await calculateScale([height, 0], [...data.map(d => d[Props.gdp]), "0"].sort((a, b) => a - b), "y");
+    barChart
+        .append("g")
+        .call(d3.axisLeft(yAxis))
 
     /**
      * X Axis
      * @type {*}
      */
-    const xScale = await calculateScale([0,width],  data.map(d => d[Props.state]), "x");
+    const xAxis = await calculateScale([0,width],  data.map(d => d[Props.state]), "x");
     barChart.append("g")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale));
+        .call(d3.axisBottom(xAxis));
 
     /**
      * Draw Data
      */
-    drawCharts(data, xScale, yScale);
+    drawCharts(data, xAxis, yAxis);
 
     /**
      * Add Labels
