@@ -35,7 +35,7 @@ function calculateScale(range, data, variant) {
     if (variant === "y") {
         return d3.scaleLinear().range(range).domain([0, data[data.length-1]])
     }
-    return d3.scaleBand().range(range).domain(data);
+    return d3.scaleTime().range(range).domain([new Date("1997"), new Date("2020")]);
 }
 
 /**
@@ -51,7 +51,7 @@ function drawSingleLine(xAxis, yAxis, data) {
         .attr("stroke", "blue")
         .attr("stroke-width", 1)
         .attr("d", d3.line()
-            .x(d => xAxis(d.year))
+            .x(d => xAxis(new Date(d.year)))
             .y(d => yAxis(d.gdp))
         );
 }
@@ -77,12 +77,11 @@ function drawLines(xAxis, yAxis, data) {
 
 (async function () {
    const data = await getData();
-
     /**
      * Calculate scales
      * @type {*}
      */
-   const xScale = calculateScale([0, width], Object.keys(data[0]).filter(key => key !== Props.state));
+    const xScale = calculateScale([0, width]);
 
     const yDomain = [].concat(...data.map(d =>
          Object
@@ -103,14 +102,9 @@ function drawLines(xAxis, yAxis, data) {
     lineChart.append("g")
         .call(d3.axisLeft(yScale))
 
+    /**
+     * Draw Lines
+     */
     drawLines(xScale, yScale, data)
 
 }())
-
-
-// const arr = Object
-//     .keys(d)
-//     .filter(key => key !== Props.state)
-//     .map(key => Math.round(+d[key]))
-// console.log(arr);
-// return arr;
