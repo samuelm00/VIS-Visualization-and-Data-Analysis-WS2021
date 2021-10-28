@@ -38,8 +38,8 @@ const brushSvg = d3.select("#brush-svg");
 const brushLineChart = brushSvg.append("g").attr("transform", `translate(${margin}, ${margin})`);
 const lineChart = svgElement.append("g").attr("transform", `translate(${margin}, ${margin})`);
 
-brushSvg.append("defs").
-    append("svg:clipPath")
+brushSvg.append("defs")
+    .append("svg:clipPath")
     .attr("id", "clip")
     .append("svg:rect")
     .attr("width", width)
@@ -47,10 +47,26 @@ brushSvg.append("defs").
     .attr("x", 0)
     .attr("y", 0);
 
+svgElement.append("defs")
+    .append("svg:clipPath")
+    .attr("id", "clip")
+    .append("svg:rect")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("x", 0)
+    .attr("y", 0);
 
-const area = brushSvg
+/**
+ * Elements mark the area of the charts!
+ * They avoid line overflow
+ */
+const brushArea = brushSvg
     .append("g")
     .attr("transform", `translate(${margin}, ${margin})`)
+    .attr("clip-path", "url(#clip)")
+
+const lineChartArea = lineChart
+    .append("g")
     .attr("clip-path", "url(#clip)")
 
 
@@ -86,23 +102,28 @@ function calculateScale(range, data, variant) {
  * @param yAxis
  * @param data
  * @param color
- * @param brushArea
+ * @param brush
  * @param state
  */
-function drawSingleLine(xAxis, yAxis, data, color, brushArea, state) {
+function drawSingleLine(xAxis, yAxis, data, color, brush, state) {
     const label = state.replace(" ", "-");
-    (brushArea ? area : lineChart).append("path")
+    (brush ? brushArea : lineChartArea).append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", color)
         .attr("stroke-width", 3)
-        .attr("class", brushArea ? "brush-line brush-line" + label  : "line " + label)
+        .attr("class", brush ? "brush-line brush-line" + label  : "line " + label)
         .attr("d", d3.line()
             .x(d => xAxis(new Date(d.year)))
             .y(d => yAxis(d.gdp))
         )
-    }
+}
 
+/**
+ *
+ * @param maxNr
+ * @returns {number}
+ */
 function getRandomNumber(maxNr) {
     return Math.floor(Math.random() * maxNr);
 }
@@ -127,6 +148,11 @@ function drawLines(xAxis, yAxis, data, brushArea) {
     })
 }
 
+/**
+ *
+ * @param data
+ * @returns {*}
+ */
 function generateColorArray(data) {
     return data.map((d,i) => `rgb(${getRandomNumber(255)+i}, ${getRandomNumber(255)+i}, ${getRandomNumber(255)+i})`)
 }
@@ -168,11 +194,11 @@ function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineCha
         xScale.domain([new Date("1997"),new Date("2020")])
     } else {
         xScale.domain([ xScale.invert(extent[0]), xScale.invert(extent[1]) ])
-        area.select(".brush").call(brush.move, null)
+        brushArea.select(".brush").call(brush.move, null)
     }
     // update line chart
     axis.call(xAxis);
-    lineChart.selectAll(".line")
+    lineChartArea.selectAll(".line")
         .transition().duration(1000)
         .attr("d", d3.line()
             .x(d => xScale(new Date(d.year)))
@@ -181,7 +207,7 @@ function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineCha
 
     //update brush chart
     axisBrushLineChart.call(xAxisBrushLineChart);
-    area.selectAll(".brush-line")
+    brushArea.selectAll(".brush-line")
         .transition().duration(1000)
         .attr("d", d3.line()
             .x(d => xScale(new Date(d.year)))
@@ -189,13 +215,67 @@ function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineCha
         );
 }
 
+/**
+ *
+ * @param event
+ */
+function onMouseOver (event) {
+    const state = event.path[0].classList[1];
+    const activeObject = getActiveObject(activeObjects, state)
+    if (!activeObject) {
+        // save current color and the name of the state as id
+        activeObjects.push({
+            [ActiveObjectProps.color]: d3.select(this).attr("stroke"),
+            [ActiveObjectProps.id]: state
+        })
+    }
+    // change color to black
+    d3.select(this)
+        .attr("stroke", "black")
+        .attr("id", state)
+
+    // add text to the path
+    lineChartArea.append("text")
+        .append("textPath")
+        .attr("xlink:href", `#${state}`)
+        .attr("id", `${state}-text`)
+        .attr("startOffset", "50%")
+        .text(state)
+}
+
+/**
+ *
+ * @param event
+ */
+function onMouseOut (event) {
+    const state = event.path[0].classList[1];
+    const activeObject = getActiveObject(activeObjects, state);
+    if (!activeObject || !activeObject[ActiveObjectProps.active]) {
+        // remove text from line chart
+        lineChartArea.select(`.${state}-text`).remove()
+        // remove black color and add the old one
+        d3.select(this)
+            .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === state)[ActiveObjectProps.color])
+            .attr("id", "")
+        activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== state)
+    }
+}
+
+/**
+ *
+ * @param event
+ */
+function onClick (event) {
+    const state = event.path[0].classList[1];
+    const activeObject = getActiveObject(activeObjects, state);
+    if (activeObject)  activeObject[ActiveObjectProps.active] = !activeObject[ActiveObjectProps.active];
+}
 
 /**
  *
  */
 (async function () {
    const data = await getData();
-   console.log(data);
    colorArray = generateColorArray(data);
 
     /**
@@ -248,52 +328,14 @@ function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineCha
     /**
      * Adding hover effects
      */
-    lineChart.selectAll(".line")
-        .on("mouseover", function (event) {
-            const state = event.path[0].classList[1];
-            const activeObject = getActiveObject(activeObjects, state)
-            if (!activeObject) {
-                // save current color and the name of the state as id
-                activeObjects.push({
-                    [ActiveObjectProps.color]: d3.select(this).attr("stroke"),
-                    [ActiveObjectProps.id]: state
-                })
-            }
-            // change color to black
-            d3.select(this)
-                .attr("stroke", "black")
-                .attr("id", state)
-
-            // add text to the path
-            lineChart.append("text")
-                .append("textPath")
-                .attr("xlink:href", `#${state}`)
-                .attr("id", `${state}-text`)
-                .attr("startOffset", "50%")
-                .text(state)
-        })
-        .on("mouseout", function (event) {
-            const state = event.path[0].classList[1];
-            const activeObject = getActiveObject(activeObjects, state);
-            if (!activeObject || !activeObject[ActiveObjectProps.active]) {
-                // remove text from line chart
-                lineChart.select(`.${state}-text`).remove()
-                // remove black color and add the old one
-                d3.select(this)
-                    .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === state)[ActiveObjectProps.color])
-                    .attr("id", "")
-                activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== state)
-            }
-        })
-        .on("click", function (event) {
-            const state = event.path[0].classList[1];
-            const activeObject = getActiveObject(activeObjects, state);
-            if (activeObject)  activeObject[ActiveObjectProps.active] = !activeObject[ActiveObjectProps.active];
-        })
+    lineChartArea.selectAll(".line")
+        .on("mouseover",  onMouseOver)
+        .on("mouseout", onMouseOut)
+        .on("click", onClick)
 
 
     /**
-     * -------------------------- BRUSHING AREA
+     * -------------------------- BRUSHING AREA-----------------------------
      */
     const yScaleBrushingArea = calculateScale([heightBrush, 0], yDomain, "y");
 
@@ -322,5 +364,5 @@ function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineCha
         .on("end", (e) => updateChart(e, xScale, yScaleBrushingArea, yScale, brush,
             axisBrushLineChart, xAxisBrushLineChart, axis, xAxis));
 
-    area.append("g").attr("class", "brush").call(brush);
+    brushArea.append("g").attr("class", "brush").call(brush);
 }())
