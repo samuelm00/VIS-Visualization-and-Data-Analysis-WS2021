@@ -71,6 +71,7 @@ function drawSingleLine(xAxis, yAxis, data, color, brushArea) {
         .attr("fill", "none")
         .attr("stroke", color)
         .attr("stroke-width", 3)
+        .attr("class", brushArea ? "brush-line" : "line")
         .attr("d", d3.line()
             .x(d => xAxis(new Date(d.year)))
             .y(d => yAxis(d.gdp))
@@ -209,7 +210,7 @@ function getActiveObject(activeObject, data) {
 
 
     /**
-     * BRUSHING AREA
+     * -------------------------- BRUSHING AREA
      */
     const xScaleBrushingArea = calculateScale([0, width]);
     const yScaleBrushingArea = calculateScale([heightBrush, 0], yDomain, "y");
@@ -221,6 +222,7 @@ function getActiveObject(activeObject, data) {
     const axis = brushLineChart.append("g")
         .attr("transform", `translate(0, ${heightBrush})`)
         .call(xAxis)
+    axis.transition().duration(1000);
 
     brushLineChart.append("g")
         .call(d3.axisLeft(yScaleBrushingArea).tickValues([0, 1000000, 2000000, 3000000]))
@@ -235,26 +237,29 @@ function getActiveObject(activeObject, data) {
      */
     const brush = d3.brushX()
         .extent([[0, 0], [width, heightBrush]])
-        .on("end", (e) => updateChart(e, xScaleBrushingArea, yScaleBrushingArea, 2021, brush, axis, xAxis));
+        .on("end", (e) => updateChart(e, xScaleBrushingArea, yScaleBrushingArea, brush, axis, xAxis));
 
     brushLineChart.append("g").attr("class", "brush").call(brush);
-}())
 
-function updateChart(event, scaleX, yScale, maxDate, brush, axis, xAxis) {
-    let extent = event.selection
+    let idleTimeout
+    function idled() { idleTimeout = null; }
 
-    if(!extent){
-        //if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
-        scaleX.domain([0,maxDate])
-    } else{
-        scaleX.domain([ scaleX.invert(extent[0]), scaleX.invert(extent[1]) ]) //scale.invert scales the values back to the domain space
-        brushLineChart.select(".brush").call(brush.move, null) // This: Remove the grey brush area as soon as the selection has been done
+    function updateChart(event, xScale, yScale, brush, axis, xAxis) {
+        let extent = event.selection
+
+        if(!extent){
+            if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
+            xScale.domain([new Date("1997"),new Date("2020")])
+        } else {
+            xScale.domain([ xScale.invert(extent[0]), xScale.invert(extent[1]) ]) //scale.invert scales the values back to the domain space
+            brushLineChart.select(".brush").call(brush.move, null) // This: Remove the grey brush area as soon as the selection has been done
+        }
+        axis.call(xAxis);
+        brushLineChart.selectAll(".brush-line")
+            .transition().duration(1000)
+            .attr("d", d3.line()
+                .x(d => xScale(new Date(d.year)))
+                .y(d => yScale(d.gdp))
+            )
     }
-
-    axis.call(xAxis)
-    brushLineChart.selectAll("path")
-        .attr("d", d3.line()
-            .x(d => scaleX(new Date(d.year)))
-            .y(d => yScale(d.gdp))
-        )
-}
+}())
