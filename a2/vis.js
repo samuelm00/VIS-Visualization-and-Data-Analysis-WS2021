@@ -24,12 +24,29 @@ const margin = 100;
 const height = 800 - margin*2;
 const heightBrush = 400 - margin * 2;
 const width = 1000 - margin*2;
+let colorArray = [];
 
 const svgElement = d3.select("#line-chart");
 const brushSvg = d3.select("#brush-svg");
 
 const brushLineChart = brushSvg.append("g").attr("transform", `translate(${margin}, ${margin})`);
 const lineChart = svgElement.append("g").attr("transform", `translate(${margin}, ${margin})`);
+
+const clip = brushSvg.append("defs").
+    append("svg:clipPath")
+    .attr("id", "clip")
+    .append("svg:rect")
+    .attr("width", width)
+    .attr("height", heightBrush)
+    .attr("x", 0)
+    .attr("y", 0);
+
+
+const area = brushSvg
+    .append("g")
+    .attr("transform", `translate(${margin}, ${margin})`)
+    .attr("clip-path", "url(#clip)")
+
 
 /**
  *
@@ -66,7 +83,7 @@ function calculateScale(range, data, variant) {
  * @param brushArea
  */
 function drawSingleLine(xAxis, yAxis, data, color, brushArea) {
-    (brushArea ? brushLineChart : lineChart).append("path")
+    (brushArea ? area : lineChart).append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", color)
@@ -98,9 +115,12 @@ function drawLines(xAxis, yAxis, data, brushArea) {
                 year: key,
                 gdp: +d[key]
             }))
-        drawSingleLine(xAxis, yAxis, dataArr,
-            `rgb(${getRandomNumber(255)+i}, ${getRandomNumber(255)+i}, ${getRandomNumber(255)+i})`, brushArea)
+        drawSingleLine(xAxis, yAxis, dataArr, colorArray[i], brushArea)
     })
+}
+
+function generateColorArray(data) {
+    return data.map((d,i) => `rgb(${getRandomNumber(255)+i}, ${getRandomNumber(255)+i}, ${getRandomNumber(255)+i})`)
 }
 
 /**
@@ -113,8 +133,44 @@ function getActiveObject(activeObject, data) {
     return activeObject.find(aO => aO[ActiveObjectProps.id] === data[Props.state])
 }
 
+/**
+ * Zoom out on double click
+ */
+let idleTimeout
+function idled() { idleTimeout = null; }
+
+/**
+ *
+ * @param event
+ * @param xScale
+ * @param yScale
+ * @param brush
+ * @param axis
+ * @param xAxis
+ * @returns {number}
+ */
+function updateChart(event, xScale, yScale, brush, axis, xAxis) {
+    let extent = event.selection
+
+    if(!extent){
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
+        xScale.domain([new Date("1997"),new Date("2020")])
+    } else {
+        xScale.domain([ xScale.invert(extent[0]), xScale.invert(extent[1]) ]) //scale.invert scales the values back to the domain space
+        area.select(".brush").call(brush.move, null) // This: Remove the grey brush area as soon as the selection has been done
+    }
+    axis.call(xAxis);
+    area.selectAll(".brush-line")
+        .transition().duration(1000)
+        .attr("d", d3.line()
+            .x(d => xScale(new Date(d.year)))
+            .y(d => yScale(d.gdp))
+        )
+}
+
 (async function () {
    const data = await getData();
+   colorArray = generateColorArray(data);
    let activeObjects = []
 
     /**
@@ -239,27 +295,5 @@ function getActiveObject(activeObject, data) {
         .extent([[0, 0], [width, heightBrush]])
         .on("end", (e) => updateChart(e, xScaleBrushingArea, yScaleBrushingArea, brush, axis, xAxis));
 
-    brushLineChart.append("g").attr("class", "brush").call(brush);
-
-    let idleTimeout
-    function idled() { idleTimeout = null; }
-
-    function updateChart(event, xScale, yScale, brush, axis, xAxis) {
-        let extent = event.selection
-
-        if(!extent){
-            if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
-            xScale.domain([new Date("1997"),new Date("2020")])
-        } else {
-            xScale.domain([ xScale.invert(extent[0]), xScale.invert(extent[1]) ]) //scale.invert scales the values back to the domain space
-            brushLineChart.select(".brush").call(brush.move, null) // This: Remove the grey brush area as soon as the selection has been done
-        }
-        axis.call(xAxis);
-        brushLineChart.selectAll(".brush-line")
-            .transition().duration(1000)
-            .attr("d", d3.line()
-                .x(d => xScale(new Date(d.year)))
-                .y(d => yScale(d.gdp))
-            )
-    }
+    area.append("g").attr("class", "brush").call(brush);
 }())
