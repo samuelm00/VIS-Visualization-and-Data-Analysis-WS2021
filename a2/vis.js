@@ -24,7 +24,13 @@ const margin = 100;
 const height = 800 - margin*2;
 const heightBrush = 400 - margin * 2;
 const width = 1000 - margin*2;
+
+// contains colors of lines
 let colorArray = [];
+
+// contains active lines
+let activeObjects = []
+
 
 const svgElement = d3.select("#line-chart");
 const brushSvg = d3.select("#brush-svg");
@@ -32,7 +38,7 @@ const brushSvg = d3.select("#brush-svg");
 const brushLineChart = brushSvg.append("g").attr("transform", `translate(${margin}, ${margin})`);
 const lineChart = svgElement.append("g").attr("transform", `translate(${margin}, ${margin})`);
 
-const clip = brushSvg.append("defs").
+brushSvg.append("defs").
     append("svg:clipPath")
     .attr("id", "clip")
     .append("svg:rect")
@@ -81,14 +87,16 @@ function calculateScale(range, data, variant) {
  * @param data
  * @param color
  * @param brushArea
+ * @param state
  */
-function drawSingleLine(xAxis, yAxis, data, color, brushArea) {
+function drawSingleLine(xAxis, yAxis, data, color, brushArea, state) {
+    const label = state.replace(" ", "-");
     (brushArea ? area : lineChart).append("path")
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", color)
         .attr("stroke-width", 3)
-        .attr("class", brushArea ? "brush-line" : "line")
+        .attr("class", brushArea ? "brush-line brush-line" + label  : "line " + label)
         .attr("d", d3.line()
             .x(d => xAxis(new Date(d.year)))
             .y(d => yAxis(d.gdp))
@@ -115,7 +123,7 @@ function drawLines(xAxis, yAxis, data, brushArea) {
                 year: key,
                 gdp: +d[key]
             }))
-        drawSingleLine(xAxis, yAxis, dataArr, colorArray[i], brushArea)
+        drawSingleLine(xAxis, yAxis, dataArr, colorArray[i], brushArea, d[Props.state])
     })
 }
 
@@ -126,11 +134,11 @@ function generateColorArray(data) {
 /**
  *
  * @param activeObject
- * @param data
+ * @param state
  * @returns {*}
  */
-function getActiveObject(activeObject, data) {
-    return activeObject.find(aO => aO[ActiveObjectProps.id] === data[Props.state])
+function getActiveObject(activeObject, state) {
+    return activeObject.find(aO => aO[ActiveObjectProps.id] === state)
 }
 
 /**
@@ -143,35 +151,52 @@ function idled() { idleTimeout = null; }
  *
  * @param event
  * @param xScale
+ * @param yScaleBrush
  * @param yScale
  * @param brush
+ * @param axisBrushLineChart
+ * @param xAxisBrushLineChart
  * @param axis
  * @param xAxis
  * @returns {number}
  */
-function updateChart(event, xScale, yScale, brush, axis, xAxis) {
+function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineChart, xAxisBrushLineChart, axis, xAxis) {
     let extent = event.selection
 
     if(!extent){
-        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, 350);
         xScale.domain([new Date("1997"),new Date("2020")])
     } else {
-        xScale.domain([ xScale.invert(extent[0]), xScale.invert(extent[1]) ]) //scale.invert scales the values back to the domain space
-        area.select(".brush").call(brush.move, null) // This: Remove the grey brush area as soon as the selection has been done
+        xScale.domain([ xScale.invert(extent[0]), xScale.invert(extent[1]) ])
+        area.select(".brush").call(brush.move, null)
     }
+    // update line chart
     axis.call(xAxis);
-    area.selectAll(".brush-line")
+    lineChart.selectAll(".line")
         .transition().duration(1000)
         .attr("d", d3.line()
             .x(d => xScale(new Date(d.year)))
             .y(d => yScale(d.gdp))
-        )
+        );
+
+    //update brush chart
+    axisBrushLineChart.call(xAxisBrushLineChart);
+    area.selectAll(".brush-line")
+        .transition().duration(1000)
+        .attr("d", d3.line()
+            .x(d => xScale(new Date(d.year)))
+            .y(d => yScaleBrush(d.gdp))
+        );
 }
 
+
+/**
+ *
+ */
 (async function () {
    const data = await getData();
+   console.log(data);
    colorArray = generateColorArray(data);
-   let activeObjects = []
 
     /**
      * Calculate scales
@@ -189,11 +214,12 @@ function updateChart(event, xScale, yScale, brush, axis, xAxis) {
    const yScale = calculateScale([height, 0], yDomain, "y");
 
     /**
-     * Add Axiss
+     * Add Axis
      */
-    lineChart.append("g")
+    const xAxis = d3.axisBottom(xScale);
+    const axis = lineChart.append("g")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale))
+        .call(xAxis)
 
     lineChart.append("g")
         .call(d3.axisLeft(yScale))
@@ -222,45 +248,46 @@ function updateChart(event, xScale, yScale, brush, axis, xAxis) {
     /**
      * Adding hover effects
      */
-    lineChart.selectAll("path")
-        .data(data)
-        .on("mouseover", function (event, data) {
-            const activeObject = getActiveObject(activeObjects, data)
+    lineChart.selectAll(".line")
+        .on("mouseover", function (event) {
+            const state = event.path[0].classList[1];
+            const activeObject = getActiveObject(activeObjects, state)
             if (!activeObject) {
                 // save current color and the name of the state as id
                 activeObjects.push({
                     [ActiveObjectProps.color]: d3.select(this).attr("stroke"),
-                    [ActiveObjectProps.id]: data[Props.state]
+                    [ActiveObjectProps.id]: state
                 })
             }
-
             // change color to black
             d3.select(this)
                 .attr("stroke", "black")
-                .attr("id", data[Props.state])
+                .attr("id", state)
 
             // add text to the path
             lineChart.append("text")
                 .append("textPath")
-                .attr("xlink:href", `#${data[Props.state]}`)
-                .attr("id", `${data[Props.state]}-text`)
+                .attr("xlink:href", `#${state}`)
+                .attr("id", `${state}-text`)
                 .attr("startOffset", "50%")
-                .text(data[Props.state])
+                .text(state)
         })
-        .on("mouseout", function (event, data) {
-            const activeObject = getActiveObject(activeObjects, data);
+        .on("mouseout", function (event) {
+            const state = event.path[0].classList[1];
+            const activeObject = getActiveObject(activeObjects, state);
             if (!activeObject || !activeObject[ActiveObjectProps.active]) {
                 // remove text from line chart
-                lineChart.select(`#${data[Props.state]}-text`).remove()
+                lineChart.select(`.${state}-text`).remove()
                 // remove black color and add the old one
                 d3.select(this)
-                    .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === data[Props.state])[ActiveObjectProps.color])
+                    .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === state)[ActiveObjectProps.color])
                     .attr("id", "")
-                activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== data[Props.state])
+                activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== state)
             }
         })
-        .on("click", function (event, data) {
-            const activeObject = getActiveObject(activeObjects, data);
+        .on("click", function (event) {
+            const state = event.path[0].classList[1];
+            const activeObject = getActiveObject(activeObjects, state);
             if (activeObject)  activeObject[ActiveObjectProps.active] = !activeObject[ActiveObjectProps.active];
         })
 
@@ -268,17 +295,16 @@ function updateChart(event, xScale, yScale, brush, axis, xAxis) {
     /**
      * -------------------------- BRUSHING AREA
      */
-    const xScaleBrushingArea = calculateScale([0, width]);
     const yScaleBrushingArea = calculateScale([heightBrush, 0], yDomain, "y");
 
     /**
      * Add Axis
      */
-    const xAxis = d3.axisBottom(xScaleBrushingArea);
-    const axis = brushLineChart.append("g")
+    const xAxisBrushLineChart = d3.axisBottom(xScale);
+    const axisBrushLineChart = brushLineChart.append("g")
         .attr("transform", `translate(0, ${heightBrush})`)
-        .call(xAxis)
-    axis.transition().duration(1000);
+        .call(xAxisBrushLineChart)
+    axisBrushLineChart.transition().duration(1000);
 
     brushLineChart.append("g")
         .call(d3.axisLeft(yScaleBrushingArea).tickValues([0, 1000000, 2000000, 3000000]))
@@ -286,14 +312,15 @@ function updateChart(event, xScale, yScale, brush, axis, xAxis) {
     /**
      * Draw lines
      */
-    drawLines(xScaleBrushingArea, yScaleBrushingArea, data, true);
+    drawLines(xScale, yScaleBrushingArea, data, true);
 
     /**
      * Brushing
      */
     const brush = d3.brushX()
         .extent([[0, 0], [width, heightBrush]])
-        .on("end", (e) => updateChart(e, xScaleBrushingArea, yScaleBrushingArea, brush, axis, xAxis));
+        .on("end", (e) => updateChart(e, xScale, yScaleBrushingArea, yScale, brush,
+            axisBrushLineChart, xAxisBrushLineChart, axis, xAxis));
 
     area.append("g").attr("class", "brush").call(brush);
 }())
