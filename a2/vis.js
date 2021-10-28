@@ -22,8 +22,11 @@ const ActiveObjectProps = {
  */
 const margin = 100;
 const height = 800 - margin*2;
+const heightBrush = 200 - margin * 2;
 const width = 1000 - margin*2;
 const svgElement = d3.select("#line-chart");
+const brushSvg = d3.select("#brush");
+const brushLineChart = d3.append("g").attr("transform", `translate(${margin}, ${margin})`);
 const lineChart = svgElement.append("g").attr("transform", `translate(${margin}, ${margin})`);
 
 /**
@@ -63,7 +66,7 @@ function drawSingleLine(xAxis, yAxis, data, color) {
         .datum(data)
         .attr("fill", "none")
         .attr("stroke", color)
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 3)
         .attr("d", d3.line()
             .x(d => xAxis(new Date(d.year)))
             .y(d => yAxis(d.gdp))
@@ -103,6 +106,67 @@ function drawLines(xAxis, yAxis, data) {
 function getActiveObject(activeObject, data) {
     return activeObject.find(aO => aO[ActiveObjectProps.id] === data[Props.state])
 }
+
+/**
+ *
+ * @param event
+ * @param data
+ * @param activeObjects
+ */
+function onMouseOver(event, data, activeObjects) {
+    const activeObject = getActiveObject(activeObjects, data)
+    if (!activeObject) {
+        // save current color and the name of the state as id
+        activeObjects.push({
+            [ActiveObjectProps.color]: d3.select(this).attr("stroke"),
+            [ActiveObjectProps.id]: data[Props.state]
+        })
+    }
+
+    // change color to black
+    d3.select(this)
+        .attr("stroke", "black")
+        .attr("id", data[Props.state])
+
+    // add text to the path
+    lineChart.append("text")
+        .append("textPath")
+        .attr("xlink:href", `#${data[Props.state]}`)
+        .attr("id", `${data[Props.state]}-text`)
+        .attr("startOffset", "50%")
+        .text(data[Props.state])
+}
+
+/**
+ *
+ * @param event
+ * @param data
+ * @param activeObjects
+ */
+function onMouseOut (event, data, activeObjects) {
+    const activeObject = getActiveObject(activeObjects, data);
+    if (!activeObject || !activeObject[ActiveObjectProps.active]) {
+        // remove text from line chart
+        lineChart.select(`#${data[Props.state]}-text`).remove()
+        // remove black color and add the old one
+        d3.select(this)
+            .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === data[Props.state])[ActiveObjectProps.color])
+            .attr("id", "")
+        activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== data[Props.state])
+    }
+}
+
+/**
+ *
+ * @param event
+ * @param data
+ * @param activeObjects
+ */
+function onClick (event, data, activeObjects) {
+    const activeObject = getActiveObject(activeObjects, data);
+    if (activeObject)  activeObject[ActiveObjectProps.active] = !activeObject[ActiveObjectProps.active];
+}
+
 
 (async function () {
    const data = await getData();
@@ -159,43 +223,7 @@ function getActiveObject(activeObject, data) {
      */
     lineChart.selectAll("path")
         .data(data)
-        .on("mouseover", function (event, data) {
-            const activeObject = getActiveObject(activeObjects, data)
-            if (!activeObject) {
-                // save current color and the name of the state as id
-                activeObjects.push({
-                    [ActiveObjectProps.color]: d3.select(this).attr("stroke"),
-                    [ActiveObjectProps.id]: data[Props.state]
-                })
-            }
-
-            // change color to black
-            d3.select(this)
-                .attr("stroke", "black")
-                .attr("id", data[Props.state])
-
-            // add text to the path
-            lineChart.append("text")
-                .append("textPath")
-                .attr("xlink:href", `#${data[Props.state]}`)
-                .attr("id", `${data[Props.state]}-text`)
-                .attr("startOffset", "50%")
-                .text(data[Props.state])
-        })
-        .on("mouseout", function (event, data) {
-            const activeObject = getActiveObject(activeObjects, data);
-            if (!activeObject || !activeObject[ActiveObjectProps.active]) {
-                // remove text from line chart
-                lineChart.select(`#${data[Props.state]}-text`).remove()
-                // remove black color and add the old one
-                d3.select(this)
-                    .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === data[Props.state])[ActiveObjectProps.color])
-                    .attr("id", "")
-                activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== data[Props.state])
-            }
-        })
-        .on("click", function (event, data) {
-            const activeObject = getActiveObject(activeObjects, data);
-            if (activeObject)  activeObject[ActiveObjectProps.active] = !activeObject[ActiveObjectProps.active];
-        })
+        .on("mouseover", e => onMouseOver(e, data, activeObjects))
+        .on("mouseout", e => onMouseOut(e, data, activeObjects))
+        .on("click", e => onClick(e, data, activeObjects))
 }())
