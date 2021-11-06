@@ -8,4 +8,5 @@ What I did:
 - used `scaleTime` for the x-axis and `scaleLinear` for the y-axis
 - used the `brushX` method to allow brushing
 - added hover effects with `mousenter` and `mouseout` events
+- added `onClick` effect
 - added random colors for the lines
