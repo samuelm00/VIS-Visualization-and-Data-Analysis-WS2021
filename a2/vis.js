@@ -239,7 +239,7 @@ function onMouseOver (event) {
         .append("textPath")
         .attr("xlink:href", `#${state}`)
         .attr("id", `${state}-text`)
-        .attr("startOffset", "50%")
+        .attr("startOffset", "80%")
         .text(state)
 }
 
