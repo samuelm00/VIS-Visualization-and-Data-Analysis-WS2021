@@ -257,6 +257,7 @@ function onMouseOut (event) {
         d3.select(this)
             .attr("stroke", activeObjects.find(aO => aO[ActiveObjectProps.id] === state)[ActiveObjectProps.color])
             .attr("id", "")
+        // remove object from the active-objects
         activeObjects = activeObjects.filter(aO => aO[ActiveObjectProps.id] !== state)
     }
 }
