@@ -154,7 +154,7 @@ function drawLines(xAxis, yAxis, data, brushArea) {
  * @returns {*}
  */
 function generateColorArray(data) {
-    return data.map((d,i) => `rgb(${getRandomNumber(255)+i}, ${getRandomNumber(255)+i}, ${getRandomNumber(255)+i})`)
+    return data.map((d,i) => `rgb(${getRandomNumber(200)+i}, ${getRandomNumber(255)+i}, ${getRandomNumber(255)+i})`)
 }
 
 /**
@@ -220,7 +220,7 @@ function updateChart(event, xScale, yScaleBrush, yScale, brush, axisBrushLineCha
  * @param event
  */
 function onMouseOver (event) {
-    const state = event.path[0].classList[1];
+    const state = event.target.classList[1];
     const activeObject = getActiveObject(activeObjects, state)
     if (!activeObject) {
         // save current color and the name of the state as id
@@ -248,7 +248,7 @@ function onMouseOver (event) {
  * @param event
  */
 function onMouseOut (event) {
-    const state = event.path[0].classList[1];
+    const state = event.target.classList[1];
     const activeObject = getActiveObject(activeObjects, state);
     if (!activeObject || !activeObject[ActiveObjectProps.active]) {
         // remove text from line chart
@@ -267,7 +267,7 @@ function onMouseOut (event) {
  * @param event
  */
 function onClick (event) {
-    const state = event.path[0].classList[1];
+    const state = event.target.classList[1];
     const activeObject = getActiveObject(activeObjects, state);
     if (activeObject)  activeObject[ActiveObjectProps.active] = !activeObject[ActiveObjectProps.active];
 }
