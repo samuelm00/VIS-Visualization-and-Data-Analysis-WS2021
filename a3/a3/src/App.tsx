@@ -1,7 +1,12 @@
 import React from "react";
+import ChoroplethMap from "./components/ChoroplethMap";
 
 function App() {
-  return <div className={""}>Hallo</div>;
+  return (
+    <main>
+      <ChoroplethMap />
+    </main>
+  );
 }
 
 export default App;
