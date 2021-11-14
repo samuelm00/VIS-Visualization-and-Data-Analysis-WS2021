@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { BaDegreeData, GeoData, IncomeData } from "./types/type.choroplethMap";
 import { GeoProjection } from "d3";
 
-const colors = [
+export const colors = [
   "#eaede8",
   "#dd97e8",
   "#c811e8",
@@ -30,6 +30,7 @@ export function basicMap(height: number, width: number): GeoProjection {
 /**
  *
  * @param svgId
+ * @param currentYear
  */
 export async function createMap(svgId: string, currentYear: string) {
   const svg = d3.select(`#${svgId}`);
@@ -47,15 +48,17 @@ export async function createMap(svgId: string, currentYear: string) {
     baDegreeData.map((d) => d[currentYear] as number),
     d3.range(n)
   );
+
+  // draw the map
   svg
     .append("g")
     .selectAll("path")
     .data(geoData.features)
     .enter()
     .append("path")
-    // draw each country
     .attr("d", d3.geoPath().projection(projection))
-    .attr("fill", function (d) {
+    .attr("stroke", "white")
+    .attr("fill", (d) => {
       const baDegreeValue = baDegreeData.find(
         (x) => x.State === d.properties.name
       );
@@ -74,6 +77,7 @@ export async function createMap(svgId: string, currentYear: string) {
 }
 
 /**
+ * Logik of this function taken from https://observablehq.com/@d3/bivariate-choropleth [colors]
  *
  * @param incomeValue
  * @param baDegreeValue
@@ -81,7 +85,7 @@ export async function createMap(svgId: string, currentYear: string) {
  * @param y
  * @param n
  */
-function getColor(
+export function getColor(
   incomeValue: number,
   baDegreeValue: number,
   x: any,
