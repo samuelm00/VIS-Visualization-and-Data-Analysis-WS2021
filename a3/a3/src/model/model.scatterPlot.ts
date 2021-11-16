@@ -46,7 +46,7 @@ export async function createScatterPlot(
     d3.range(n)
   );
   const y = d3.scaleQuantile(
-    baDegreeData.map((d) => d[currentYear] as number),
+    incomeData.map((d) => d[currentYear] as number),
     d3.range(n)
   );
 

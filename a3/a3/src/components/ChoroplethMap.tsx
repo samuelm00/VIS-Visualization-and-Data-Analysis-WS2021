@@ -8,8 +8,8 @@ import {
 
 export default function ChoroplethMap() {
   const [currentYear, setCurrentYear] = useState("2011");
-  const [width] = useState(window.innerWidth);
-  const [height] = useState(window.innerHeight);
+  const [width] = useState(window.innerWidth / 1.5);
+  const [height] = useState(window.innerHeight / 1.3);
 
   useLayoutEffect(() => {
     createMap("map-svg", currentYear);

@@ -4,11 +4,9 @@ import ScatterPlot from "./components/ScatterPlot";
 
 function App() {
   return (
-    <main>
+    <main className={"flex items-center justify-between h-screen"}>
+      <ScatterPlot />
       <ChoroplethMap />
-      <div className={"flex justify-center"}>
-        <ScatterPlot />
-      </div>
     </main>
   );
 }

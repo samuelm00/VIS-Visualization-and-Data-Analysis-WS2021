@@ -19,13 +19,11 @@ export const colors = [
  * @param height
  * @param width
  */
-export function basicMap(height: number, width: number): GeoProjection {
-  d3.geoPath();
-  return d3
-    .geoMercator()
-    .scale(500)
-    .center([-width / 12, height / 2])
-    .translate([width / 2, height / 2]);
+export async function basicMap(
+  height: number,
+  width: number
+): Promise<GeoProjection> {
+  return d3.geoAlbersUsa();
 }
 /**
  *
@@ -38,14 +36,14 @@ export async function createMap(svgId: string, currentYear: string) {
   const baDegreeData = await getBaDegreeData();
   const incomeData = await getIncomeData();
   const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
-  const projection = basicMap(+svg.attr("height"), +svg.attr("width"));
+  const projection = await basicMap(+svg.attr("height"), +svg.attr("width"));
   const n = Math.floor(Math.sqrt(colors.length));
   const x = d3.scaleQuantile(
     baDegreeData.map((d) => d[currentYear] as number),
     d3.range(n)
   );
   const y = d3.scaleQuantile(
-    baDegreeData.map((d) => d[currentYear] as number),
+    incomeData.map((d) => d[currentYear] as number),
     d3.range(n)
   );
 

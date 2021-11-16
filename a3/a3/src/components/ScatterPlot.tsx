@@ -3,7 +3,7 @@ import { createScatterPlot, margin } from "../model/model.scatterPlot";
 import * as d3 from "d3";
 
 export default function ScatterPlot() {
-  const [width] = useState(window.innerWidth / 2);
+  const [width] = useState(window.innerWidth / 3);
   const [height] = useState(window.innerHeight / 2);
 
   useLayoutEffect(() => {
