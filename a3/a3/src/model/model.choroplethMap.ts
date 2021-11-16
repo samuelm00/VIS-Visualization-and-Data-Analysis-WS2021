@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import { BaDegreeData, GeoData, IncomeData } from "./types/type.choroplethMap";
 import { GeoProjection } from "d3";
-import { margin } from "./model.scatterPlot";
 
 export const colors = [
   "#e6e6e6",
