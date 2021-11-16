@@ -7,14 +7,11 @@ export default function ScatterPlot() {
   const [height] = useState(window.innerHeight / 2);
 
   useLayoutEffect(() => {
-    const svg = d3
-      .select(`#scatter-plot`)
+    d3.select(`#scatter-plot`)
       .append("g")
       .attr("id", "plot")
       .attr("transform", "translate(" + margin * 1.2 + "," + margin / 2 + ")");
-  }, []);
 
-  useLayoutEffect(() => {
     createScatterPlot("plot", "2011", height, width);
   }, []);
 

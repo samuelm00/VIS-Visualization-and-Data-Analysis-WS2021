@@ -1,10 +1,5 @@
 import * as d3 from "d3";
-import {
-  colors,
-  getBaDegreeData,
-  getColor,
-  getIncomeData,
-} from "./model.choroplethMap";
+import { colors, getBaDegreeData, getIncomeData } from "./model.choroplethMap";
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
 
 export const margin = 40;
@@ -40,15 +35,7 @@ export async function createScatterPlot(
     income: +incomeData[index][currentYear] as number,
   }));
 
-  const n = Math.floor(Math.sqrt(colors.length));
-  const x = d3.scaleQuantile(
-    baDegreeData.map((d) => d[currentYear] as number),
-    d3.range(n)
-  );
-  const y = d3.scaleQuantile(
-    incomeData.map((d) => d[currentYear] as number),
-    d3.range(n)
-  );
+  addColorGrid(plotId, [height, width]);
 
   svg
     .append("g")
@@ -63,7 +50,31 @@ export async function createScatterPlot(
       return yScale(d.income);
     })
     .attr("r", 3)
-    .style("fill", (d) => getColor(d.income, d.baDegree, x, y, n));
+    .style("fill", (d) => "black");
+}
+
+/**
+ *
+ * @param plotId
+ * @param svgSize
+ */
+function addColorGrid(plotId: string, svgSize: [number, number]) {
+  const size = Math.floor(Math.sqrt(colors.length));
+  const [height, width] = svgSize;
+  const svg = d3.select(`#${plotId}`);
+  const range = d3.range(size);
+  const baseGrid = d3.cross(range, range);
+  svg
+    .append("g")
+    .selectAll("rect")
+    .data(baseGrid)
+    .enter()
+    .append("rect")
+    .attr("height", (height - margin) / size)
+    .attr("width", (width - margin) / size)
+    .attr("x", ([x]) => (x * (width - margin)) / size)
+    .attr("y", ([, y]) => ((size - 1 - y) * (height - margin)) / size)
+    .attr("fill", ([x, y]) => getColor(x, y, size));
 }
 
 /**
@@ -83,28 +94,26 @@ function addScales(
   width: number,
   height: number
 ) {
+  const baData = baDegreeData.map((d) => +d[currentYear]);
   const xScale = getScale(
-    [0, getMax(baDegreeData.map((d) => d[currentYear]) as number[])],
+    [Math.min(...baData), Math.max(...baData)],
     [0, width - margin * 2]
   );
+  const icData = incomeData.map((d) => +d[currentYear]);
   const yScale = getScale(
-    [0, getMax(incomeData.map((d) => d[currentYear]) as number[])],
-    [height - margin * 2, 0]
+    [Math.min(...icData), Math.max(...icData)],
+    [height - margin, 0]
   );
 
   const svg = d3.select(`#${plotId}`);
   svg
     .append("g")
-    .attr("transform", "translate(0," + (height - margin * 2) + ")")
+    .attr("transform", "translate(0," + (height - margin) + ")")
     .call(d3.axisBottom(xScale));
   svg.append("g").call(d3.axisLeft(yScale));
 
   return [xScale, yScale];
 }
-
-const getMax = (data: number[]) => {
-  return Math.max(...data);
-};
 
 /**
  *
@@ -113,4 +122,14 @@ const getMax = (data: number[]) => {
  */
 function getScale(domain: number[], range: number[]) {
   return d3.scaleLinear().domain(domain).range(range);
+}
+
+/**
+ *
+ * @param x
+ * @param y
+ * @param n
+ */
+export function getColor(x: number, y: number, n: number) {
+  return colors[x + y * n];
 }

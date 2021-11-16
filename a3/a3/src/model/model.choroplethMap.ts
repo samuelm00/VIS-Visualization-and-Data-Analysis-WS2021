@@ -1,18 +1,21 @@
 import * as d3 from "d3";
 import { BaDegreeData, GeoData, IncomeData } from "./types/type.choroplethMap";
 import { GeoProjection } from "d3";
+import { margin } from "./model.scatterPlot";
 
 export const colors = [
-  "#eaede8",
-  "#dd97e8",
-  "#c811e8",
-  "#b1ede8",
-  "#b197e9",
-  "#b111e9",
-  "#07ede8",
-  "#0797ea",
-  "#0711ea",
+  "#e6e6e6",
+  "#96d9d9",
+  "#2dc9c9",
+  "#a3c7ce",
+  "#6bbdc3",
+  "#20afb4",
+  "#60a9b5",
+  "#3fa0ac",
+  "#13949f",
 ];
+
+const colorGrid = [colors.slice(0, 3), colors.slice(3, 6), colors.slice(6, 9)];
 
 /**
  *
@@ -38,14 +41,8 @@ export async function createMap(svgId: string, currentYear: string) {
   const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
   const projection = await basicMap(+svg.attr("height"), +svg.attr("width"));
   const n = Math.floor(Math.sqrt(colors.length));
-  const x = d3.scaleQuantile(
-    baDegreeData.map((d) => d[currentYear] as number),
-    d3.range(n)
-  );
-  const y = d3.scaleQuantile(
-    incomeData.map((d) => d[currentYear] as number),
-    d3.range(n)
-  );
+  const x = d3.scaleThreshold([32, 42], d3.range(n));
+  const y = d3.scaleThreshold([44000, 55000], d3.range(n));
 
   // draw the map
   svg
@@ -65,8 +62,8 @@ export async function createMap(svgId: string, currentYear: string) {
       if (!incomeValue || !baDegreeValue) return "white";
 
       return getColor(
-        incomeValue[currentYear] as number,
-        baDegreeValue[currentYear] as number,
+        +incomeValue[currentYear],
+        +baDegreeValue[currentYear],
         x,
         y,
         n
@@ -75,7 +72,6 @@ export async function createMap(svgId: string, currentYear: string) {
 }
 
 /**
- * Logik of this function taken from https://observablehq.com/@d3/bivariate-choropleth [colors]
  *
  * @param incomeValue
  * @param baDegreeValue
@@ -91,7 +87,12 @@ export function getColor(
   n: number
 ) {
   if (!incomeValue || !baDegreeValue) return "#000";
-  return colors[x(baDegreeValue) + y(incomeValue) * n];
+  // Logic of this function taken from https://observablehq.com/@d3/bivariate-choropleth [colors]
+  return colorGrid[y(incomeValue)][x(baDegreeValue)];
+}
+
+function test(x: number, y: number, n: number) {
+  return colors[x + y * n];
 }
 
 /**
