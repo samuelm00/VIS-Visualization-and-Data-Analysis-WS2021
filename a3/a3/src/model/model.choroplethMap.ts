@@ -16,6 +16,10 @@ export const colors = [
 
 const colorGrid = [colors.slice(0, 3), colors.slice(3, 6), colors.slice(6, 9)];
 
+const n = Math.floor(Math.sqrt(colors.length));
+const x = d3.scaleThreshold([32, 42], d3.range(n));
+const y = d3.scaleThreshold([44000, 55000], d3.range(n));
+
 /**
  *
  * @param height
@@ -39,9 +43,6 @@ export async function createMap(svgId: string, currentYear: string) {
   const incomeData = await getIncomeData();
   const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
   const projection = await basicMap(+svg.attr("height"), +svg.attr("width"));
-  const n = Math.floor(Math.sqrt(colors.length));
-  const x = d3.scaleThreshold([32, 42], d3.range(n));
-  const y = d3.scaleThreshold([44000, 55000], d3.range(n));
 
   // draw the map
   svg
@@ -63,9 +64,6 @@ export async function createMap(svgId: string, currentYear: string) {
       return getColor(
         +incomeValue[currentYear],
         +baDegreeValue[currentYear],
-        x,
-        y,
-        n
       );
     });
 }
@@ -81,12 +79,8 @@ export async function createMap(svgId: string, currentYear: string) {
 export function getColor(
   incomeValue: number,
   baDegreeValue: number,
-  x: any,
-  y: any,
-  n: number
 ) {
   if (!incomeValue || !baDegreeValue) return "#000";
-  // Logic of this function taken from https://observablehq.com/@d3/bivariate-choropleth [colors]
   return colorGrid[y(incomeValue)][x(baDegreeValue)];
 }
 
