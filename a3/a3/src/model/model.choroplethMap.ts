@@ -61,10 +61,7 @@ export async function createMap(svgId: string, currentYear: string) {
 
       if (!incomeValue || !baDegreeValue) return "white";
 
-      return getColor(
-        +incomeValue[currentYear],
-        +baDegreeValue[currentYear],
-      );
+      return getColor(+incomeValue[currentYear], +baDegreeValue[currentYear]);
     });
 }
 
@@ -76,16 +73,9 @@ export async function createMap(svgId: string, currentYear: string) {
  * @param y
  * @param n
  */
-export function getColor(
-  incomeValue: number,
-  baDegreeValue: number,
-) {
+export function getColor(incomeValue: number, baDegreeValue: number) {
   if (!incomeValue || !baDegreeValue) return "#000";
   return colorGrid[y(incomeValue)][x(baDegreeValue)];
-}
-
-function test(x: number, y: number, n: number) {
-  return colors[x + y * n];
 }
 
 /**

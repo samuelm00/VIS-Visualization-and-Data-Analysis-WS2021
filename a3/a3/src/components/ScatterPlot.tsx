@@ -2,7 +2,11 @@ import React, { useLayoutEffect, useState } from "react";
 import { createScatterPlot, margin } from "../model/model.scatterPlot";
 import * as d3 from "d3";
 
-export default function ScatterPlot() {
+interface ScatterPlotProps {
+  currentYear: string;
+}
+
+export default function ScatterPlot({ currentYear }: ScatterPlotProps) {
   const [width] = useState(window.innerWidth / 3);
   const [height] = useState(window.innerHeight / 2);
 

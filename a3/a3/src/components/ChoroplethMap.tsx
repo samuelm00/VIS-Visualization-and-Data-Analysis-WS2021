@@ -1,13 +1,11 @@
 import React, { useLayoutEffect, useState } from "react";
-import {
-  basicMap,
-  createMap,
-  getBaDegreeData,
-  getIncomeData,
-} from "../model/model.choroplethMap";
+import { createMap } from "../model/model.choroplethMap";
 
-export default function ChoroplethMap() {
-  const [currentYear, setCurrentYear] = useState("2011");
+interface ChoroplethMapProps {
+  currentYear: string;
+}
+
+export default function ChoroplethMap({ currentYear }: ChoroplethMapProps) {
   const [width] = useState(window.innerWidth / 1.5);
   const [height] = useState(window.innerHeight / 1.3);
 
