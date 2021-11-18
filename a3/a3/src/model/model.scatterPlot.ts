@@ -1,5 +1,10 @@
 import * as d3 from "d3";
-import { colors, getBaDegreeData, getIncomeData } from "./model.choroplethMap";
+import {
+  colorGrid,
+  colors,
+  getBaDegreeData,
+  getIncomeData,
+} from "./model.choroplethMap";
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
 
 export const margin = 40;
@@ -21,8 +26,7 @@ export async function createScatterPlot(
   if (!svg) return;
   const baDegreeData = await getBaDegreeData();
   const incomeData = await getIncomeData();
-  const [xScale, yScale] = addScales(
-    "plot",
+  const [xScale, yScale] = createScales(
     baDegreeData,
     currentYear,
     incomeData,
@@ -30,7 +34,14 @@ export async function createScatterPlot(
     height
   );
 
+  svg
+    .append("g")
+    .attr("transform", "translate(0," + (height - margin) + ")")
+    .call(d3.axisBottom(xScale));
+  svg.append("g").call(d3.axisLeft(yScale));
+
   const data = baDegreeData.map((d, index) => ({
+    name: d.State,
     baDegree: +d[currentYear] as number,
     income: +incomeData[index][currentYear] as number,
   }));
@@ -50,7 +61,63 @@ export async function createScatterPlot(
       return yScale(d.income);
     })
     .attr("r", 3)
-    .style("fill", (d) => "black");
+    .style("fill", (d) => "black")
+    .on("mouseover", function (event, data) {
+      d3.select(this).style("fill", "red");
+      d3.select("#scatter-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(
+          `State: ${data.name} <br /> Income: ${data.income} <br /> Ba Degrees: ${data.baDegree}`
+        );
+    })
+    .on("mouseout", function (d) {
+      d3.select(this).style("fill", "black");
+      d3.select("#scatter-tooltip").style("opacity", "0");
+    });
+}
+
+/**
+ *
+ * @param plotId
+ * @param currentYear
+ * @param height
+ * @param width
+ */
+export async function updateScatterPlot(
+  plotId: string,
+  currentYear: string,
+  height: number,
+  width: number
+) {
+  const baDegreeData = await getBaDegreeData();
+  const incomeData = await getIncomeData();
+  const svg = d3.select(`#${plotId}`);
+  const data = baDegreeData.map((d, index) => ({
+    name: baDegreeData[index].State,
+    baDegree: +d[currentYear] as number,
+    income: +incomeData[index][currentYear] as number,
+  }));
+  const [xScale, yScale] = createScales(
+    baDegreeData,
+    currentYear,
+    incomeData,
+    width,
+    height
+  );
+  svg
+    .selectAll("circle")
+    .data(data)
+    .transition()
+    .duration(1000)
+    .attr("cx", function (d) {
+      return xScale(d.baDegree);
+    })
+    .attr("cy", function (d) {
+      return yScale(d.income);
+    });
 }
 
 /**
@@ -79,15 +146,13 @@ function addColorGrid(plotId: string, svgSize: [number, number]) {
 
 /**
  *
- * @param plotId
  * @param baDegreeData
  * @param currentYear
  * @param width
  * @param incomeData
  * @param height
  */
-function addScales(
-  plotId: string,
+function createScales(
   baDegreeData: BaDegreeData[],
   currentYear: string,
   incomeData: IncomeData[],
@@ -104,14 +169,6 @@ function addScales(
     [Math.min(...icData), Math.max(...icData)],
     [height - margin, 0]
   );
-
-  const svg = d3.select(`#${plotId}`);
-  svg
-    .append("g")
-    .attr("transform", "translate(0," + (height - margin) + ")")
-    .call(d3.axisBottom(xScale));
-  svg.append("g").call(d3.axisLeft(yScale));
-
   return [xScale, yScale];
 }
 
@@ -131,5 +188,5 @@ function getScale(domain: number[], range: number[]) {
  * @param n
  */
 export function getColor(x: number, y: number, n: number) {
-  return colors[x + y * n];
+  return colorGrid[y][x];
 }

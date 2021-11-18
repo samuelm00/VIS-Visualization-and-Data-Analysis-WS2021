@@ -10,15 +10,19 @@ export const colors = [
   "#6bbdc3",
   "#20afb4",
   "#60a9b5",
-  "#3fa0ac",
+  "orange", //"#3fa0ac",
   "#13949f",
 ];
 
-const colorGrid = [colors.slice(0, 3), colors.slice(3, 6), colors.slice(6, 9)];
+export const colorGrid = [
+  colors.slice(0, 3),
+  colors.slice(3, 6),
+  colors.slice(6, 9),
+];
 
 const n = Math.floor(Math.sqrt(colors.length));
-const x = d3.scaleThreshold([32, 42], d3.range(n));
-const y = d3.scaleThreshold([44000, 55000], d3.range(n));
+const x = d3.scaleThreshold([27, 38], d3.range(n));
+const y = d3.scaleThreshold([37000, 46000], d3.range(n));
 
 /**
  *
@@ -60,6 +64,43 @@ export async function createMap(svgId: string, currentYear: string) {
       const incomeValue = incomeData.find((x) => x.State === d.properties.name);
 
       if (!incomeValue || !baDegreeValue) return "white";
+
+      return getColor(+incomeValue[currentYear], +baDegreeValue[currentYear]);
+    });
+}
+
+/**
+ *
+ * @param svgId
+ * @param currentYear
+ */
+export async function updateMap(svgId: string, currentYear: string) {
+  const svg = d3.select(`#${svgId}`);
+  if (!svg) return;
+  const baDegreeData = await getBaDegreeData();
+  const incomeData = await getIncomeData();
+  const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
+
+  // draw the map
+  svg
+    .selectAll("path")
+    .data(geoData.features)
+    .transition()
+    .duration(1000)
+    .attr("fill", (d) => {
+      const baDegreeValue = baDegreeData.find(
+        (x) => x.State === d.properties.name
+      );
+      const incomeValue = incomeData.find((x) => x.State === d.properties.name);
+
+      if (!incomeValue || !baDegreeValue) return "white";
+
+      console.log(incomeValue[currentYear], +baDegreeValue[currentYear]);
+      console.log(y(+incomeValue[currentYear]), x(+baDegreeValue[currentYear]));
+      console.log(
+        getColor(+incomeValue[currentYear], +baDegreeValue[currentYear])
+      );
+      console.log("\n");
 
       return getColor(+incomeValue[currentYear], +baDegreeValue[currentYear]);
     });

@@ -1,9 +1,13 @@
 import React, { useLayoutEffect, useState } from "react";
-import { createScatterPlot, margin } from "../model/model.scatterPlot";
+import {
+  createScatterPlot,
+  updateScatterPlot,
+  margin,
+} from "../model/model.scatterPlot";
 import * as d3 from "d3";
 
 interface ScatterPlotProps {
-  currentYear: string;
+  currentYear: number;
 }
 
 export default function ScatterPlot({ currentYear }: ScatterPlotProps) {
@@ -15,9 +19,20 @@ export default function ScatterPlot({ currentYear }: ScatterPlotProps) {
       .append("g")
       .attr("id", "plot")
       .attr("transform", "translate(" + margin * 1.2 + "," + margin / 2 + ")");
-
-    createScatterPlot("plot", "2011", height, width);
+    createScatterPlot("plot", currentYear.toString(), height, width);
   }, []);
 
-  return <svg height={height} width={width} id={"scatter-plot"} />;
+  useLayoutEffect(() => {
+    updateScatterPlot("plot", currentYear.toString(), height, width);
+  }, [currentYear]);
+
+  return (
+    <>
+      <svg height={height} width={width} id={"scatter-plot"} />
+      <div
+        id={"scatter-tooltip"}
+        className={"absolute bg-white px-2 border-2"}
+      />
+    </>
+  );
 }
