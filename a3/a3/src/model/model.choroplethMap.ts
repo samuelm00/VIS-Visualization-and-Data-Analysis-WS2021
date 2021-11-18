@@ -10,7 +10,7 @@ export const colors = [
   "#6bbdc3",
   "#20afb4",
   "#60a9b5",
-  "orange", //"#3fa0ac",
+  "#3fa0ac",
   "#13949f",
 ];
 
@@ -21,8 +21,6 @@ export const colorGrid = [
 ];
 
 const n = Math.floor(Math.sqrt(colors.length));
-const x = d3.scaleThreshold([27, 38], d3.range(n));
-const y = d3.scaleThreshold([37000, 46000], d3.range(n));
 
 /**
  *
@@ -48,6 +46,14 @@ export async function createMap(svgId: string, currentYear: string) {
   const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
   const projection = await basicMap(+svg.attr("height"), +svg.attr("width"));
 
+  const [yDomain, xDomain] = getThresholdDomain(
+    baDegreeData,
+    incomeData,
+    currentYear
+  );
+  const x = d3.scaleThreshold().domain(xDomain).range(d3.range(n));
+  const y = d3.scaleThreshold().domain(yDomain).range(d3.range(n));
+
   // draw the map
   svg
     .append("g")
@@ -65,7 +71,12 @@ export async function createMap(svgId: string, currentYear: string) {
 
       if (!incomeValue || !baDegreeValue) return "white";
 
-      return getColor(+incomeValue[currentYear], +baDegreeValue[currentYear]);
+      console.log(x(+incomeValue[currentYear]), y(+baDegreeValue[currentYear]));
+
+      return getColor(
+        x(+incomeValue[currentYear]),
+        y(+baDegreeValue[currentYear])
+      );
     });
 }
 
@@ -81,6 +92,14 @@ export async function updateMap(svgId: string, currentYear: string) {
   const incomeData = await getIncomeData();
   const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
 
+  const [yDomain, xDomain] = getThresholdDomain(
+    baDegreeData,
+    incomeData,
+    currentYear
+  );
+  const x = d3.scaleThreshold().domain(xDomain).range(d3.range(n));
+  const y = d3.scaleThreshold().domain(yDomain).range(d3.range(n));
+
   // draw the map
   svg
     .selectAll("path")
@@ -95,28 +114,46 @@ export async function updateMap(svgId: string, currentYear: string) {
 
       if (!incomeValue || !baDegreeValue) return "white";
 
-      console.log(incomeValue[currentYear], +baDegreeValue[currentYear]);
-      console.log(y(+incomeValue[currentYear]), x(+baDegreeValue[currentYear]));
-      console.log(
-        getColor(+incomeValue[currentYear], +baDegreeValue[currentYear])
+      return getColor(
+        x(+incomeValue[currentYear]),
+        y(+baDegreeValue[currentYear])
       );
-      console.log("\n");
-
-      return getColor(+incomeValue[currentYear], +baDegreeValue[currentYear]);
     });
 }
 
 /**
  *
- * @param incomeValue
- * @param baDegreeValue
+ * @param baDegreeData
+ * @param incomeData
+ * @param currentYear
+ */
+function getThresholdDomain(
+  baDegreeData: BaDegreeData[],
+  incomeData: IncomeData[],
+  currentYear: string
+) {
+  const baData = baDegreeData.map((d) => +d[currentYear]);
+  const minBa = Math.min(...baData);
+  const maxBa = Math.max(...baData);
+  const icData = incomeData.map((d) => +d[currentYear]);
+  const minIncome = Math.min(...icData);
+  const maxIncome = Math.max(...icData);
+  const y = [];
+  const x = [];
+  for (let i = 1; i < 3; ++i) {
+    y.push(minBa + i * ((maxBa - minBa) / 3));
+    x.push(minIncome + i * ((maxIncome - minIncome) / 3));
+  }
+  return [y, x];
+}
+
+/**
+ *
  * @param x
  * @param y
- * @param n
  */
-export function getColor(incomeValue: number, baDegreeValue: number) {
-  if (!incomeValue || !baDegreeValue) return "#000";
-  return colorGrid[y(incomeValue)][x(baDegreeValue)];
+export function getColor(x: number, y: number) {
+  return colorGrid[x][y];
 }
 
 /**

@@ -37,8 +37,9 @@ export async function createScatterPlot(
   svg
     .append("g")
     .attr("transform", "translate(0," + (height - margin) + ")")
+    .attr("id", "xAxis")
     .call(d3.axisBottom(xScale));
-  svg.append("g").call(d3.axisLeft(yScale));
+  svg.append("g").attr("id", "yAxis").call(d3.axisLeft(yScale));
 
   const data = baDegreeData.map((d, index) => ({
     name: d.State,
@@ -75,7 +76,9 @@ export async function createScatterPlot(
     })
     .on("mouseout", function (d) {
       d3.select(this).style("fill", "black");
-      d3.select("#scatter-tooltip").style("opacity", "0");
+      d3.select("#scatter-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
     });
 }
 
@@ -85,6 +88,7 @@ export async function createScatterPlot(
  * @param currentYear
  * @param height
  * @param width
+ * @param setThreshold
  */
 export async function updateScatterPlot(
   plotId: string,
@@ -107,6 +111,20 @@ export async function updateScatterPlot(
     width,
     height
   );
+
+  svg
+    .selectAll("#xAxis")
+    .transition()
+    .duration(200)
+    // @ts-ignore
+    .call(d3.axisBottom(xScale));
+  svg
+    .selectAll("#yAxis")
+    .transition()
+    .duration(200)
+    // @ts-ignore
+    .call(d3.axisLeft(yScale));
+
   svg
     .selectAll("circle")
     .data(data)
@@ -138,8 +156,8 @@ function addColorGrid(plotId: string, svgSize: [number, number]) {
     .enter()
     .append("rect")
     .attr("height", (height - margin) / size)
-    .attr("width", (width - margin) / size)
-    .attr("x", ([x]) => (x * (width - margin)) / size)
+    .attr("width", (width - margin * 2) / size)
+    .attr("x", ([x]) => (x * (width - margin * 2)) / size)
     .attr("y", ([, y]) => ((size - 1 - y) * (height - margin)) / size)
     .attr("fill", ([x, y]) => getColor(x, y, size));
 }
@@ -160,15 +178,15 @@ function createScales(
   height: number
 ) {
   const baData = baDegreeData.map((d) => +d[currentYear]);
-  const xScale = getScale(
-    [Math.min(...baData), Math.max(...baData)],
-    [0, width - margin * 2]
-  );
+  const maxBa = Math.max(...baData);
+  const minBa = Math.min(...baData);
+  const xScale = getScale([minBa, maxBa], [0, width - margin * 2]);
+
   const icData = incomeData.map((d) => +d[currentYear]);
-  const yScale = getScale(
-    [Math.min(...icData), Math.max(...icData)],
-    [height - margin, 0]
-  );
+  const incomeMin = Math.min(...icData);
+  const incomeMax = Math.max(...icData);
+  const yScale = getScale([incomeMin, incomeMax], [height - margin, 0]);
+
   return [xScale, yScale];
 }
 

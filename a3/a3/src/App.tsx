@@ -6,6 +6,7 @@ import YearSlider from "./components/YearSlider";
 
 function App() {
   const [currentYear, setCurrentYear] = useState<number>(2006);
+
   return (
     <main className={"flex justify-center"}>
       <div className={"px-8"} style={{ maxWidth: 1400 }}>

@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { createMap, updateMap } from "../model/model.choroplethMap";
+import * as d3 from "d3";
 
 interface ChoroplethMapProps {
   currentYear: number;
