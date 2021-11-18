@@ -15,6 +15,7 @@ export default function ScatterPlot({ currentYear }: ScatterPlotProps) {
   const [height] = useState(window.innerHeight / 2);
 
   useLayoutEffect(() => {
+    const brush = d3.brush().on("brush", console.log);
     d3.select(`#scatter-plot`)
       .append("g")
       .attr("id", "plot")
@@ -31,7 +32,7 @@ export default function ScatterPlot({ currentYear }: ScatterPlotProps) {
       <svg height={height} width={width} id={"scatter-plot"} />
       <div
         id={"scatter-tooltip"}
-        className={"absolute bg-white px-2 border-2"}
+        className={"absolute bg-white px-2 border-2 opacity-0"}
       />
     </>
   );

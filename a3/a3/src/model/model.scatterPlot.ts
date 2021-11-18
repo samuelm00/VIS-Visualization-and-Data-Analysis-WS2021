@@ -49,8 +49,27 @@ export async function createScatterPlot(
 
   addColorGrid(plotId, [height, width]);
 
+  const brush = d3
+    .brush()
+    .on("brush", (event) =>
+      handleBrushing(
+        event,
+        baDegreeData,
+        currentYear,
+        incomeData,
+        width,
+        height
+      )
+    )
+    .extent([
+      [0, 0],
+      [width - margin * 2, height - margin],
+    ]);
+  svg.append("g").call(brush);
+
   svg
     .append("g")
+    .attr("id", "data-points")
     .selectAll("dot")
     .data(data)
     .enter()
@@ -136,6 +155,46 @@ export async function updateScatterPlot(
     .attr("cy", function (d) {
       return yScale(d.income);
     });
+}
+
+/**
+ *
+ * @param event
+ * @param baDegreeData
+ * @param currentYear
+ * @param incomeData
+ * @param width
+ * @param height
+ */
+function handleBrushing(
+  event: any,
+  baDegreeData: BaDegreeData[],
+  currentYear: string,
+  incomeData: IncomeData[],
+  width: number,
+  height: number
+) {
+  const selection = event.selection;
+  const [xScale, yScale] = createScales(
+    baDegreeData,
+    currentYear,
+    incomeData,
+    width,
+    height
+  );
+  console.log(d3.select("#data-points"));
+  d3.select("#data-points")
+    .selectAll("circle")
+    .style("fill", (d: any) => {
+      console.log(d);
+      return isSelected(selection, xScale(d.baDegree), yScale(d.income))
+        ? "red"
+        : "black";
+    });
+}
+
+function isSelected(cordinates: number[][], x: number, y: number) {
+  return true;
 }
 
 /**

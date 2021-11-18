@@ -71,8 +71,6 @@ export async function createMap(svgId: string, currentYear: string) {
 
       if (!incomeValue || !baDegreeValue) return "white";
 
-      console.log(x(+incomeValue[currentYear]), y(+baDegreeValue[currentYear]));
-
       return getColor(
         x(+incomeValue[currentYear]),
         y(+baDegreeValue[currentYear])

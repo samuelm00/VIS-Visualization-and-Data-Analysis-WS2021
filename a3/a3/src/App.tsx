@@ -6,6 +6,7 @@ import YearSlider from "./components/YearSlider";
 
 function App() {
   const [currentYear, setCurrentYear] = useState<number>(2006);
+  const [selectedBrushPoints, setSelectedBrushPoints] = useState([]);
 
   return (
     <main className={"flex justify-center"}>
