@@ -15,6 +15,7 @@ export const margin = 40;
  * @param currentYear
  * @param height
  * @param width
+ * @param setSelectedBrushPoints
  */
 export async function createScatterPlot(
   plotId: string,
@@ -167,6 +168,7 @@ export async function updateScatterPlot(
  * @param incomeData
  * @param width
  * @param height
+ * @param setSelectedBrushPoints
  */
 function handleBrushing(
   event: any,
@@ -185,22 +187,19 @@ function handleBrushing(
     width,
     height
   );
+  let selected: string[] = [];
   d3.select("#data-points")
     .selectAll("circle")
     .style("fill", (d: any) => {
-      console.log(d);
       if (isSelected(selection, xScale(d.baDegree), yScale(d.income))) {
-        setSelectedBrushPoints((prev) =>
-          Array.from(new Set([...prev, d.name]))
-        );
+        selected = Array.from(new Set([...selected, d.name]));
         return "red";
       } else {
-        setSelectedBrushPoints((prev) =>
-          prev.filter((name) => name !== d.name)
-        );
+        selected.filter((name) => name !== d.name);
         return "black";
       }
     });
+  setSelectedBrushPoints(selected);
 }
 
 function isSelected(coordinates: number[][], x: number, y: number) {

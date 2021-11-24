@@ -7,7 +7,10 @@ interface ChoroplethMapProps {
   setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function ChoroplethMap({ currentYear }: ChoroplethMapProps) {
+export default function ChoroplethMap({
+  currentYear,
+  selectedBrushPoints,
+}: ChoroplethMapProps) {
   const [width] = useState(900);
   const [height] = useState(500);
 
@@ -16,8 +19,8 @@ export default function ChoroplethMap({ currentYear }: ChoroplethMapProps) {
   }, []);
 
   useLayoutEffect(() => {
-    updateMap("map-svg", currentYear.toString());
-  }, [currentYear]);
+    updateMap("map-svg", currentYear.toString(), selectedBrushPoints);
+  }, [currentYear, selectedBrushPoints]);
 
   return <svg id={"map-svg"} height={height} width={width} />;
 }

@@ -62,7 +62,7 @@ export async function createMap(svgId: string, currentYear: string) {
     .enter()
     .append("path")
     .attr("d", d3.geoPath().projection(projection))
-    .attr("stroke", "white")
+    .attr("stroke", "black")
     .attr("fill", (d) => {
       const baDegreeValue = baDegreeData.find(
         (x) => x.State === d.properties.name
@@ -83,7 +83,11 @@ export async function createMap(svgId: string, currentYear: string) {
  * @param svgId
  * @param currentYear
  */
-export async function updateMap(svgId: string, currentYear: string) {
+export async function updateMap(
+  svgId: string,
+  currentYear: string,
+  selectedBrushPoints: string[]
+) {
   const svg = d3.select(`#${svgId}`);
   if (!svg) return;
   const baDegreeData = await getBaDegreeData();
@@ -103,7 +107,7 @@ export async function updateMap(svgId: string, currentYear: string) {
     .selectAll("path")
     .data(geoData.features)
     .transition()
-    .duration(1000)
+    .duration(100)
     .attr("fill", (d) => {
       const baDegreeValue = baDegreeData.find(
         (x) => x.State === d.properties.name
@@ -111,6 +115,16 @@ export async function updateMap(svgId: string, currentYear: string) {
       const incomeValue = incomeData.find((x) => x.State === d.properties.name);
 
       if (!incomeValue || !baDegreeValue) return "white";
+
+      if (selectedBrushPoints.length) {
+        if (selectedBrushPoints.includes(d.properties.name)) {
+          return getColor(
+            x(+incomeValue[currentYear]),
+            y(+baDegreeValue[currentYear])
+          );
+        }
+        return "white";
+      }
 
       return getColor(
         x(+incomeValue[currentYear]),
