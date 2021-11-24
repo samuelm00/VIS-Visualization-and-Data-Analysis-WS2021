@@ -6,6 +6,7 @@ import {
   getIncomeData,
 } from "./model.choroplethMap";
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
+import { selection } from "d3";
 
 export const margin = 40;
 
@@ -182,19 +183,24 @@ function handleBrushing(
     width,
     height
   );
-  console.log(d3.select("#data-points"));
   d3.select("#data-points")
     .selectAll("circle")
     .style("fill", (d: any) => {
-      console.log(d);
-      return isSelected(selection, xScale(d.baDegree), yScale(d.income))
-        ? "red"
-        : "black";
+      if (isSelected(selection, xScale(d.baDegree), yScale(d.income))) {
+        return "red";
+      } else {
+        return "black";
+      }
     });
 }
 
-function isSelected(cordinates: number[][], x: number, y: number) {
-  return true;
+function isSelected(coordinates: number[][], x: number, y: number) {
+  return (
+    coordinates[0][0] <= x &&
+    x <= coordinates[1][0] &&
+    coordinates[0][1] <= y &&
+    y <= coordinates[1][1]
+  );
 }
 
 /**
