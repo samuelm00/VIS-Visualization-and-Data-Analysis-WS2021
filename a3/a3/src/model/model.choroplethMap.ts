@@ -62,7 +62,7 @@ export async function createMap(svgId: string, currentYear: string) {
     .enter()
     .append("path")
     .attr("d", d3.geoPath().projection(projection))
-    .attr("stroke", "black")
+    .attr("stroke", "gray")
     .attr("fill", (d) => {
       const baDegreeValue = baDegreeData.find(
         (x) => x.State === d.properties.name
