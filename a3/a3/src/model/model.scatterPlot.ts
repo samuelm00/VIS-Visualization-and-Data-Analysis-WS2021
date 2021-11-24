@@ -99,6 +99,23 @@ export async function createScatterPlot(
         .style("opacity", "0")
         .style("left", "-1000px");
     });
+
+  // add axis labels
+  svg
+    .append("text")
+    .attr("x", -(height / 2) - margin)
+    .attr("y", -60)
+    .attr("transform", "rotate(-90)")
+    .attr("text-anchor", "middle")
+    .attr("class", "font-bold")
+    .text("Mean Yearly Income");
+
+  svg
+    .append("text")
+    .attr("x", width / 2 + margin)
+    .attr("y", 750)
+    .attr("text-anchor", "middle")
+    .text("Years");
 }
 
 /**

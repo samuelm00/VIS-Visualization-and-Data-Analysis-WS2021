@@ -38,6 +38,7 @@ export async function basicMap(
  *
  * @param svgId
  * @param currentYear
+ * @param setSelectedBrushPoints
  */
 export async function createMap(
   svgId: string,
@@ -107,6 +108,7 @@ export async function createMap(
  *
  * @param svgId
  * @param currentYear
+ * @param selectedBrushPoints
  */
 export async function updateMap(
   svgId: string,

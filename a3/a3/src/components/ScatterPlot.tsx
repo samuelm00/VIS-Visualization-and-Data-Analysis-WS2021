@@ -25,7 +25,7 @@ export default function ScatterPlot({
     d3.select(`#scatter-plot`)
       .append("g")
       .attr("id", "plot")
-      .attr("transform", "translate(" + margin * 1.2 + "," + margin / 2 + ")");
+      .attr("transform", "translate(" + margin * 1.8 + "," + margin / 2 + ")");
     createScatterPlot(
       "plot",
       currentYear.toString(),
