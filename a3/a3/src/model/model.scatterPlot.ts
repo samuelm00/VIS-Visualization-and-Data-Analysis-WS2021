@@ -6,7 +6,6 @@ import {
   getIncomeData,
 } from "./model.choroplethMap";
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
-import { selection } from "d3";
 
 export const margin = 40;
 
@@ -21,7 +20,8 @@ export async function createScatterPlot(
   plotId: string,
   currentYear: string,
   height: number,
-  width: number
+  width: number,
+  setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>
 ) {
   const svg = d3.select(`#${plotId}`);
   if (!svg) return;
@@ -59,7 +59,8 @@ export async function createScatterPlot(
         currentYear,
         incomeData,
         width,
-        height
+        height,
+        setSelectedBrushPoints
       )
     )
     .extent([
@@ -173,7 +174,8 @@ function handleBrushing(
   currentYear: string,
   incomeData: IncomeData[],
   width: number,
-  height: number
+  height: number,
+  setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>
 ) {
   const selection = event.selection;
   const [xScale, yScale] = createScales(
@@ -186,9 +188,16 @@ function handleBrushing(
   d3.select("#data-points")
     .selectAll("circle")
     .style("fill", (d: any) => {
+      console.log(d);
       if (isSelected(selection, xScale(d.baDegree), yScale(d.income))) {
+        setSelectedBrushPoints((prev) =>
+          Array.from(new Set([...prev, d.name]))
+        );
         return "red";
       } else {
+        setSelectedBrushPoints((prev) =>
+          prev.filter((name) => name !== d.name)
+        );
         return "black";
       }
     });

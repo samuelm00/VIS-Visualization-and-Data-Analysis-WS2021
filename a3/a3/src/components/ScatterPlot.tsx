@@ -8,19 +8,29 @@ import * as d3 from "d3";
 
 interface ScatterPlotProps {
   currentYear: number;
+  selectedBrushPoints: string[];
+  setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-export default function ScatterPlot({ currentYear }: ScatterPlotProps) {
+export default function ScatterPlot({
+  currentYear,
+  setSelectedBrushPoints,
+}: ScatterPlotProps) {
   const [width] = useState(window.innerWidth / 3);
   const [height] = useState(window.innerHeight / 2);
 
   useLayoutEffect(() => {
-    const brush = d3.brush().on("brush", console.log);
     d3.select(`#scatter-plot`)
       .append("g")
       .attr("id", "plot")
       .attr("transform", "translate(" + margin * 1.2 + "," + margin / 2 + ")");
-    createScatterPlot("plot", currentYear.toString(), height, width);
+    createScatterPlot(
+      "plot",
+      currentYear.toString(),
+      height,
+      width,
+      setSelectedBrushPoints
+    );
   }, []);
 
   useLayoutEffect(() => {

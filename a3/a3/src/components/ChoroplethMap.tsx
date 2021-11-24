@@ -3,6 +3,8 @@ import { createMap, updateMap } from "../model/model.choroplethMap";
 
 interface ChoroplethMapProps {
   currentYear: number;
+  selectedBrushPoints: string[];
+  setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export default function ChoroplethMap({ currentYear }: ChoroplethMapProps) {
