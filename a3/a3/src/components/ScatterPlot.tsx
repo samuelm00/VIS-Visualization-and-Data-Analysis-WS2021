@@ -15,6 +15,7 @@ interface ScatterPlotProps {
 export default function ScatterPlot({
   currentYear,
   setSelectedBrushPoints,
+  selectedBrushPoints,
 }: ScatterPlotProps) {
   const [width] = useState(window.innerWidth / 3);
   const [height] = useState(window.innerHeight / 2);

@@ -91,8 +91,10 @@ export async function createScatterPlot(
           `State: ${data.name} <br /> Income: ${data.income} <br /> Ba Degrees: ${data.baDegree}`
         );
     })
-    .on("mouseout", function (d) {
-      d3.select(this).style("fill", "black");
+    .on("mouseout", function (event, { name }) {
+      if (!d3.select(this).attr("class")?.includes("circle-selected")) {
+        d3.select(this).style("fill", "black");
+      }
       d3.select("#scatter-tooltip")
         .style("opacity", "0")
         .style("left", "-1000px");
@@ -175,9 +177,11 @@ function handleBrushing(
       const cy = +d3.select(this).attr("cy");
       if (isSelected(selection, cx, cy)) {
         selected = Array.from(new Set([...selected, d.name]));
+        d3.select(this).classed("circle-selected", true);
         return "red";
       } else {
         selected.filter((name) => name !== d.name);
+        d3.select(this).classed("circle-selected", false);
         return "black";
       }
     });
