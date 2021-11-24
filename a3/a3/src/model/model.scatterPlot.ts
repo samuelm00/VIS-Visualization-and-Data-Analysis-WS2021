@@ -8,6 +8,7 @@ import {
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
 
 export const margin = 40;
+let brush: d3.BrushBehavior<unknown>;
 
 /**
  *
@@ -51,24 +52,19 @@ export async function createScatterPlot(
 
   addColorGrid(plotId, [height, width]);
 
-  const brush = d3
+  brush = d3
     .brush()
-    .on("brush", (event) =>
-      handleBrushing(
-        event,
-        baDegreeData,
-        currentYear,
-        incomeData,
-        width,
-        height,
-        setSelectedBrushPoints
-      )
-    )
     .extent([
       [0, 0],
       [width - margin * 2, height - margin],
-    ]);
-  svg.append("g").call(brush);
+    ])
+    .on("brush", (event) =>
+      handleBrushing(event, currentYear, setSelectedBrushPoints)
+    )
+    .on("end", ({ selection }) => {
+      handleBrushEnd(setSelectedBrushPoints, selection);
+    });
+  svg.append("g").attr("id", "brush").call(brush);
 
   svg
     .append("g")
@@ -163,35 +159,22 @@ export async function updateScatterPlot(
 /**
  *
  * @param event
- * @param baDegreeData
  * @param currentYear
- * @param incomeData
- * @param width
- * @param height
  * @param setSelectedBrushPoints
  */
 function handleBrushing(
   event: any,
-  baDegreeData: BaDegreeData[],
   currentYear: string,
-  incomeData: IncomeData[],
-  width: number,
-  height: number,
   setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>
 ) {
   const selection = event.selection;
-  const [xScale, yScale] = createScales(
-    baDegreeData,
-    currentYear,
-    incomeData,
-    width,
-    height
-  );
   let selected: string[] = [];
   d3.select("#data-points")
     .selectAll("circle")
-    .style("fill", (d: any) => {
-      if (isSelected(selection, xScale(d.baDegree), yScale(d.income))) {
+    .style("fill", function (d: any) {
+      const cx = +d3.select(this).attr("cx");
+      const cy = +d3.select(this).attr("cy");
+      if (isSelected(selection, cx, cy)) {
         selected = Array.from(new Set([...selected, d.name]));
         return "red";
       } else {
@@ -209,6 +192,25 @@ function isSelected(coordinates: number[][], x: number, y: number) {
     coordinates[0][1] <= y &&
     y <= coordinates[1][1]
   );
+}
+
+/**
+ *
+ * @param selection
+ * @param setSelectedBrushPoints
+ */
+function handleBrushEnd(
+  setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>,
+  selection?: number[][]
+) {
+  if (!selection) {
+    setSelectedBrushPoints([]);
+    d3.select("#data-points")
+      .selectAll("circle")
+      .style("fill", (d: any) => {
+        return "black";
+      });
+  }
 }
 
 /**
