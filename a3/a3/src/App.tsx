@@ -13,10 +13,16 @@ function App() {
   return (
     <main className={"flex justify-center"}>
       <div className={"px-8"} style={{ maxWidth: 1400 }}>
-        <div className={"mt-8"}>
+        <div className={"flex justify-center mt-8"}>
+          <h1 className={"font-bold text-4xl"}>
+            Educational Attainment Rate and the Mean Income's relationship in
+            the USA
+          </h1>
+        </div>
+        <div className={"mt-16"}>
           <YearSlider year={currentYear} setYear={setCurrentYear} />
         </div>
-        <div className={"flex items-center justify-center space-x-10 h-screen"}>
+        <div className={"mt-28 flex items-center justify-center space-x-10"}>
           <div>
             <ScatterPlot
               selectedBrushPoints={selectedBrushPoints}
