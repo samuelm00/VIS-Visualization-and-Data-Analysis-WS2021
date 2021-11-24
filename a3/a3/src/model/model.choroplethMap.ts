@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { BaDegreeData, GeoData, IncomeData } from "./types/type.choroplethMap";
 import { GeoProjection } from "d3";
+import React from "react";
 
 export const colors = [
   "#e6e6e6",
@@ -38,7 +39,11 @@ export async function basicMap(
  * @param svgId
  * @param currentYear
  */
-export async function createMap(svgId: string, currentYear: string) {
+export async function createMap(
+  svgId: string,
+  currentYear: string,
+  setSelectedBrushPoints: React.Dispatch<React.SetStateAction<string[]>>
+) {
   const svg = d3.select(`#${svgId}`);
   if (!svg) return;
   const baDegreeData = await getBaDegreeData();
@@ -86,6 +91,15 @@ export async function createMap(svgId: string, currentYear: string) {
     })
     .on("mouseout", function () {
       d3.select("#map-tooltip").style("opacity", "0").style("left", "-1000px");
+    })
+    .on("click", function (event, data) {
+      setSelectedBrushPoints((prev) => {
+        if (prev.includes(data.properties.name)) {
+          return prev.filter((x) => x !== data.properties.name);
+        } else {
+          return [...prev, data.properties.name];
+        }
+      });
     });
 }
 

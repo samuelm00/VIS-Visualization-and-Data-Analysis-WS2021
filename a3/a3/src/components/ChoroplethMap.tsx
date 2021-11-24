@@ -10,12 +10,13 @@ interface ChoroplethMapProps {
 export default function ChoroplethMap({
   currentYear,
   selectedBrushPoints,
+  setSelectedBrushPoints,
 }: ChoroplethMapProps) {
   const [width] = useState(900);
   const [height] = useState(500);
 
   useLayoutEffect(() => {
-    createMap("map-svg", currentYear.toString());
+    createMap("map-svg", currentYear.toString(), setSelectedBrushPoints);
   }, []);
 
   useLayoutEffect(() => {
