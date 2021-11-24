@@ -107,7 +107,7 @@ export async function updateMap(
     .selectAll("path")
     .data(geoData.features)
     .transition()
-    .duration(100)
+    .duration(200)
     .attr("fill", (d) => {
       const baDegreeValue = baDegreeData.find(
         (x) => x.State === d.properties.name
