@@ -3,6 +3,7 @@ import {
   createScatterPlot,
   updateScatterPlot,
   margin,
+  updateCircles,
 } from "../model/model.scatterPlot";
 import * as d3 from "d3";
 
@@ -37,6 +38,10 @@ export default function ScatterPlot({
   useLayoutEffect(() => {
     updateScatterPlot("plot", currentYear.toString(), height, width);
   }, [currentYear]);
+
+  useLayoutEffect(() => {
+    updateCircles(selectedBrushPoints);
+  }, [selectedBrushPoints]);
 
   return (
     <>

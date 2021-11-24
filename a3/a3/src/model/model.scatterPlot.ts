@@ -188,6 +188,29 @@ function handleBrushing(
   setSelectedBrushPoints(selected);
 }
 
+/**
+ *
+ * @param selectedBrushPoints
+ */
+export function updateCircles(selectedBrushPoints: string[]) {
+  d3.select("#data-points")
+    .selectAll("circle")
+    .style("fill", function (d: any) {
+      console.log(d);
+      if (selectedBrushPoints.includes(d.name)) {
+        return "red";
+      } else {
+        return "black";
+      }
+    });
+}
+
+/**
+ *
+ * @param coordinates
+ * @param x
+ * @param y
+ */
 function isSelected(coordinates: number[][], x: number, y: number) {
   return (
     coordinates[0][0] <= x &&
