@@ -22,5 +22,13 @@ export default function ChoroplethMap({
     updateMap("map-svg", currentYear.toString(), selectedBrushPoints);
   }, [currentYear, selectedBrushPoints]);
 
-  return <svg id={"map-svg"} height={height} width={width} />;
+  return (
+    <>
+      <svg id={"map-svg"} height={height} width={width} />;
+      <div
+        id={"map-tooltip"}
+        className={"absolute bg-white px-2 border-2 opacity-0"}
+      />
+    </>
+  );
 }
