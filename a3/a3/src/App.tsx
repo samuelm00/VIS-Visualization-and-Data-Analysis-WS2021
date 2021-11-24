@@ -8,8 +8,6 @@ function App() {
   const [currentYear, setCurrentYear] = useState<number>(2006);
   const [selectedBrushPoints, setSelectedBrushPoints] = useState<string[]>([]);
 
-  console.log(selectedBrushPoints);
-
   return (
     <main className={"flex justify-center"}>
       <div className={"px-8"} style={{ maxWidth: 1400 }}>
