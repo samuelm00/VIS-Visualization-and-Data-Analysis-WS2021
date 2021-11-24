@@ -8,7 +8,6 @@ import {
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
 
 export const margin = 40;
-let brush: d3.BrushBehavior<unknown>;
 
 /**
  *
@@ -52,7 +51,7 @@ export async function createScatterPlot(
 
   addColorGrid(plotId, [height, width]);
 
-  brush = d3
+  const brush = d3
     .brush()
     .extent([
       [0, 0],
