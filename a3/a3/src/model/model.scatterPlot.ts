@@ -103,19 +103,20 @@ export async function createScatterPlot(
   // add axis labels
   svg
     .append("text")
-    .attr("x", -(height / 2) - margin)
+    .attr("x", -(height / 2))
     .attr("y", -60)
     .attr("transform", "rotate(-90)")
     .attr("text-anchor", "middle")
     .attr("class", "font-bold")
-    .text("Mean Yearly Income");
+    .text("Average personal yearly income");
 
   svg
     .append("text")
-    .attr("x", width / 2 + margin)
-    .attr("y", 750)
+    .attr("x", width / 2 - margin)
+    .attr("y", height)
     .attr("text-anchor", "middle")
-    .text("Years");
+    .attr("class", "text-sm font-bold")
+    .text("Educational attainment rate (bachelor or higher)");
 }
 
 /**

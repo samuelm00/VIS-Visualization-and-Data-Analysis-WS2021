@@ -25,7 +25,7 @@ export default function ChoroplethMap({
 
   return (
     <>
-      <svg id={"map-svg"} height={height} width={width} />;
+      <svg id={"map-svg"} height={height} width={width} />
       <div
         id={"map-tooltip"}
         className={"absolute bg-white px-2 border-2 opacity-0"}

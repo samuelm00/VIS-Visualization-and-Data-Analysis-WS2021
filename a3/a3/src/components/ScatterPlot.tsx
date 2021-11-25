@@ -24,19 +24,27 @@ export default function ScatterPlot({
   useLayoutEffect(() => {
     d3.select(`#scatter-plot`)
       .append("g")
+      .attr("height", height - margin * 2)
+      .attr("width", width - margin * 2)
       .attr("id", "plot")
-      .attr("transform", "translate(" + margin * 1.8 + "," + margin / 2 + ")");
+      .attr("transform", "translate(" + margin * 2 + "," + margin + ")");
+
     createScatterPlot(
       "plot",
       currentYear.toString(),
-      height,
-      width,
+      height - margin * 2,
+      width - margin * 2,
       setSelectedBrushPoints
     );
   }, []);
 
   useLayoutEffect(() => {
-    updateScatterPlot("plot", currentYear.toString(), height, width);
+    updateScatterPlot(
+      "plot",
+      currentYear.toString(),
+      height - margin * 2,
+      width - margin * 2
+    );
   }, [currentYear]);
 
   useLayoutEffect(() => {
