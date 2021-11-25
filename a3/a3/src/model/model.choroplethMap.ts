@@ -34,6 +34,7 @@ export async function basicMap(
 ): Promise<GeoProjection> {
   return d3.geoAlbersUsa();
 }
+
 /**
  *
  * @param svgId
@@ -49,7 +50,7 @@ export async function createMap(
   if (!svg) return;
   const baDegreeData = await getBaDegreeData();
   const incomeData = await getIncomeData();
-  const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
+  const geoData = await getGeoData();
   const projection = await basicMap(+svg.attr("height"), +svg.attr("width"));
 
   const [yDomain, xDomain] = getThresholdDomain(
@@ -119,7 +120,7 @@ export async function updateMap(
   if (!svg) return;
   const baDegreeData = await getBaDegreeData();
   const incomeData = await getIncomeData();
-  const geoData = (await d3.json("/data/us-states-geo.json")) as GeoData;
+  const geoData = await getGeoData();
 
   const [yDomain, xDomain] = getThresholdDomain(
     baDegreeData,
@@ -195,11 +196,20 @@ export function getColor(x: number, y: number) {
   return colorGrid[x][y];
 }
 
+const BASE = "/~samuelm00/VIS21W/A3";
+
+/**
+ *
+ */
+async function getGeoData() {
+  return (await d3.json(`${BASE}/data/us-states-geo.json`)) as GeoData;
+}
+
 /**
  *
  */
 export async function getBaDegreeData(): Promise<BaDegreeData[]> {
-  return d3.csv("/data/usa_ba-degree-or-higher_2006-2019.csv", (row) => {
+  return d3.csv(`${BASE}/data/usa_ba-degree-or-higher_2006-2019.csv`, (row) => {
     return row as BaDegreeData;
   });
 }
@@ -208,7 +218,10 @@ export async function getBaDegreeData(): Promise<BaDegreeData[]> {
  *
  */
 export async function getIncomeData(): Promise<IncomeData[]> {
-  return d3.csv("/data/usa_personal-income-by-state_2006-2019.csv", (row) => {
-    return row as IncomeData;
-  });
+  return d3.csv(
+    `${BASE}/data/usa_personal-income-by-state_2006-2019.csv`,
+    (row) => {
+      return row as IncomeData;
+    }
+  );
 }
