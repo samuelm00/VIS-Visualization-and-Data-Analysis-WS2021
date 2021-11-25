@@ -100,23 +100,7 @@ export async function createScatterPlot(
         .style("left", "-1000px");
     });
 
-  // add axis labels
-  svg
-    .append("text")
-    .attr("x", -(height / 2))
-    .attr("y", -60)
-    .attr("transform", "rotate(-90)")
-    .attr("text-anchor", "middle")
-    .attr("class", "font-bold")
-    .text("Average personal yearly income");
-
-  svg
-    .append("text")
-    .attr("x", width / 2 - margin)
-    .attr("y", height)
-    .attr("text-anchor", "middle")
-    .attr("class", "text-sm font-bold")
-    .text("Educational attainment rate (bachelor or higher)");
+  addAxisLabels(svg, height, width);
 }
 
 /**
@@ -173,6 +157,31 @@ export async function updateScatterPlot(
     .attr("cy", function (d) {
       return yScale(d.income);
     });
+}
+
+/**
+ *
+ * @param svg
+ * @param height
+ * @param width
+ */
+function addAxisLabels(svg: any, height: number, width: number) {
+  svg
+    .append("text")
+    .attr("x", -(height / 2))
+    .attr("y", -60)
+    .attr("transform", "rotate(-90)")
+    .attr("text-anchor", "middle")
+    .attr("class", "font-bold")
+    .text("Average personal yearly income");
+
+  svg
+    .append("text")
+    .attr("x", width / 2 - margin)
+    .attr("y", height)
+    .attr("text-anchor", "middle")
+    .attr("class", "text-sm font-bold")
+    .text("Educational attainment rate (bachelor or higher)");
 }
 
 /**
