@@ -6,6 +6,7 @@ import {
   getIncomeData,
 } from "./model.choroplethMap";
 import { BaDegreeData, IncomeData } from "./types/type.choroplethMap";
+import { Axis, ScaleLinear } from "d3";
 
 export const margin = 40;
 
@@ -36,12 +37,9 @@ export async function createScatterPlot(
     height
   );
 
-  svg
-    .append("g")
-    .attr("transform", "translate(0," + (height - margin) + ")")
-    .attr("id", "xAxis")
-    .call(d3.axisBottom(xScale));
-  svg.append("g").attr("id", "yAxis").call(d3.axisLeft(yScale));
+  // Add y and x - Axes
+  const [xAxis, yAxis] = getAxes(xScale, yScale);
+  addAxes(svg, height, xAxis, yAxis);
 
   const data = baDegreeData.map((d, index) => ({
     name: d.State,
@@ -49,6 +47,7 @@ export async function createScatterPlot(
     income: +incomeData[index][currentYear] as number,
   }));
 
+  // Add the color grid to the background of the svg
   addColorGrid(plotId, [height, width]);
 
   const brush = d3
@@ -109,7 +108,6 @@ export async function createScatterPlot(
  * @param currentYear
  * @param height
  * @param width
- * @param setThreshold
  */
 export async function updateScatterPlot(
   plotId: string,
@@ -133,18 +131,20 @@ export async function updateScatterPlot(
     height
   );
 
+  const [xAxis, yAxis] = getAxes(xScale, yScale);
+
   svg
     .selectAll("#xAxis")
     .transition()
     .duration(200)
     // @ts-ignore
-    .call(d3.axisBottom(xScale));
+    .call(xAxis);
   svg
     .selectAll("#yAxis")
     .transition()
     .duration(200)
     // @ts-ignore
-    .call(d3.axisLeft(yScale));
+    .call(yAxis);
 
   svg
     .selectAll("circle")
@@ -157,6 +157,46 @@ export async function updateScatterPlot(
     .attr("cy", function (d) {
       return yScale(d.income);
     });
+}
+
+/**
+ *
+ * @param xScale
+ * @param yScale
+ */
+function getAxes(
+  xScale: ScaleLinear<number, number, never>,
+  yScale: ScaleLinear<number, number, never>
+) {
+  const xAxis = d3
+    .axisBottom(xScale)
+    .tickFormat((d) => {
+      return `${d}%`;
+    })
+    .ticks(6);
+  const yAxis = d3.axisLeft(yScale).tickFormat(d3.format("$.2s")).ticks(6);
+  return [xAxis, yAxis];
+}
+
+/**
+ *
+ * @param svg
+ * @param height
+ * @param xAxis
+ * @param yAxis
+ */
+function addAxes(
+  svg: any,
+  height: number,
+  xAxis: Axis<number | { valueOf(): number }>,
+  yAxis: Axis<number | { valueOf(): number }>
+) {
+  svg
+    .append("g")
+    .attr("transform", "translate(0," + (height - margin) + ")")
+    .attr("id", "xAxis")
+    .call(xAxis);
+  svg.append("g").attr("id", "yAxis").call(yAxis);
 }
 
 /**
@@ -223,7 +263,6 @@ export function updateCircles(selectedBrushPoints: string[]) {
   d3.select("#data-points")
     .selectAll("circle")
     .style("fill", function (d: any) {
-      console.log(d);
       if (selectedBrushPoints.includes(d.name)) {
         return "red";
       } else {
