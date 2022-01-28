@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { getDataset } from "../../utils/utils.dataset";
 
 const margin = 20;
 
@@ -21,7 +22,8 @@ function initScatterPlotContainer(height: number, width: number) {
  * @param height
  * @param width
  */
-export function initScatterPlot(height: number, width: number) {
+export async function initScatterPlot(height: number, width: number) {
   initScatterPlotContainer(height, width);
   const svg = d3.select("#plot");
+  const data = await getDataset();
 }

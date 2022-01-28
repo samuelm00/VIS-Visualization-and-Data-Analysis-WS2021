@@ -1,0 +1,17 @@
+export interface DataSetType {
+  [key: string]: {
+    continent?: string;
+    location: string;
+    aged_65_older?: number;
+    male_smokers?: number;
+    female_smokers?: number;
+    population: number;
+    data: TimeDataMeasurements[];
+  };
+}
+
+export interface TimeDataMeasurements {
+  date: string;
+  new_cases?: number;
+  new_vaccinations: number;
+}

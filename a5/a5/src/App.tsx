@@ -11,7 +11,7 @@ import { getDataset } from "./utils/utils.dataset";
 
 function App() {
   const [currentYear, setCurrentYear] = React.useState(2006);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   if (isLoading) {
     return (
