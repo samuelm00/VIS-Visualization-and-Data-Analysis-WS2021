@@ -16,11 +16,11 @@ export default function AggregationItem({
   setPercentage,
 }: AggregationItemProps) {
   return (
-    <div className="flex justify-evenly items-center">
-      <h3 className={"font-bold"}>{label}</h3>
+    <div className="flex items-center space-x-5 bg-base-100 rounded-lg p-2">
+      <h3 className={"font-bold w-[200px]"}>{label}</h3>
       <div className="form-control">
-        <label className="input-group">
-          <span className={"bg-base-300"}>{"Weight: "}</span>
+        <label className="input-group input-group-vertical">
+          <span className={"bg-base-200"}>{"Weight: "}</span>
           <input
             type="text"
             value={weight}
@@ -30,13 +30,14 @@ export default function AggregationItem({
         </label>
       </div>
       <div className="form-control">
-        <label className="input-group">
-          <span className={"bg-base-300"}>{"Above: "}</span>
+        <label className="input-group input-group-vertical">
+          <span className={"bg-base-200"}>{"Above: "}</span>
           <input
             type="text"
             value={percentage}
             onChange={(e) => setPercentage(parseInt(e.target.value))}
-            placeholder="10"
+            max={100}
+            min={0}
             className="input input-bordered"
           />
         </label>

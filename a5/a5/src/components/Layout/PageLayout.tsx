@@ -5,5 +5,9 @@ interface PageLayoutProps {
 }
 
 export default function PageLayout({ children }: PageLayoutProps) {
-  return <main className={"bg-base-100 p-8 space-y-10"}>{children}</main>;
+  return (
+    <main className={"bg-base-100 p-8 space-y-10 max-w-[1440px]"}>
+      {children}
+    </main>
+  );
 }

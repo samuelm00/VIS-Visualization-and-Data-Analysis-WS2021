@@ -19,7 +19,7 @@ function App() {
           <Slider value={currentYear} setValue={setCurrentYear} />
         </div>
       </Card>
-      <Card>
+      <Card className={"w-1/2"}>
         <CustomAggregator />
       </Card>
     </PageLayout>

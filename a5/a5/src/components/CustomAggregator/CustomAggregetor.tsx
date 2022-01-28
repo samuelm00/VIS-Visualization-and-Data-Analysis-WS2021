@@ -35,8 +35,8 @@ export default function CustomAggregator() {
   });
 
   return (
-    <div className={"flex items-center"}>
-      <div>
+    <div className={"space-y-8"}>
+      <div className={"w-full"}>
         <Select
           options={categories}
           value={currentCategory}
@@ -45,10 +45,11 @@ export default function CustomAggregator() {
         />
       </div>
       <div className={"w-full space-y-2"}>
+        <h2>Weights/Percentages: </h2>
         {Object.keys(weights[currentCategory]).map((key, index) => (
           <AggregationItem
             key={index}
-            label={"Test"}
+            label={key}
             // @ts-ignore
             weight={weights[currentCategory][key]}
             setWeight={() => {}}
