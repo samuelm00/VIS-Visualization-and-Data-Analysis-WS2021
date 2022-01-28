@@ -2,10 +2,11 @@ import * as d3 from "d3";
 import { getDataset, getItemBasedOnYear } from "../../utils/utils.dataset";
 import { DataSetType } from "../../types/type.dataset";
 import { AggregationProps } from "../CustomAggregator/CustomAggregetor";
+import { Axis, ScaleLinear } from "d3";
 
 const margin = 20;
 
-interface YAxisData {
+interface CasesPerPopulationData {
   location: string;
   totalCases: number;
   population: number;
@@ -26,9 +27,9 @@ function initScatterPlotContainer(height: number, width: number) {
   d3.select(`#scatter-plot`)
     .append("g")
     .attr("height", height - margin * 2)
-    .attr("width", width - margin * 2)
+    .attr("width", width - margin * 3)
     .attr("id", "plot")
-    .attr("transform", "translate(" + margin + "," + margin + ")");
+    .attr("transform", "translate(" + margin * 3 + "," + 0 + ")");
 }
 
 /**
@@ -50,6 +51,8 @@ export async function initScatterPlot(
 ) {
   initScatterPlotContainer(height, width);
   const svg = d3.select("#plot");
+
+  // get and aggregate the data
   const data = await getDataset();
   const totalCasesPerPopulation = getTotalCasesPerPopulation(data, year);
   const weightedData = getWeightedData(
@@ -61,6 +64,102 @@ export async function initScatterPlot(
   );
   console.log("totalCasesPerPopulation", totalCasesPerPopulation);
   console.log("weightedData", weightedData);
+
+  // add and create x and y axis
+  const [xScale, yScale] = createScales(
+    height,
+    width,
+    year,
+    weights,
+    totalCasesPerPopulation,
+    category
+  );
+  const [xAxis, yAxis] = getAxes(xScale, yScale);
+  addAxes(svg, height, xAxis, yAxis);
+}
+
+/**
+ *
+ * @param height
+ * @param width
+ * @param year
+ * @param weights
+ * @param casesPerPopulation
+ * @param category
+ */
+function createScales(
+  height: number,
+  width: number,
+  year: number,
+  weights: AggregationProps,
+  casesPerPopulation: CasesPerPopulationData[],
+  category: keyof AggregationProps
+) {
+  const minWeight = 0;
+  const maxWeight = Object.values(weights[category]).reduce(
+    (acc, curr) => acc + curr,
+    0
+  );
+  const xScale = getScale([minWeight, maxWeight], [0, width - margin * 3]);
+
+  const minCasesPerPopulation = 0;
+
+  const maxCasesPerPopulation = Math.max(
+    ...casesPerPopulation.map((d) => d.casesPerPopulation)
+  );
+  console.log(casesPerPopulation.map((d) => d.casesPerPopulation));
+  console.log(maxCasesPerPopulation);
+
+  const yScale = getScale(
+    [minCasesPerPopulation, maxCasesPerPopulation],
+    [height - margin * 2, 0]
+  );
+
+  return [xScale, yScale];
+}
+
+/**
+ *
+ * @param domain
+ * @param range
+ */
+function getScale(domain: number[], range: number[]) {
+  return d3.scaleLinear().domain(domain).range(range);
+}
+
+/**
+ *
+ * @param xScale
+ * @param yScale
+ */
+function getAxes(
+  xScale: ScaleLinear<number, number, never>,
+  yScale: ScaleLinear<number, number, never>
+) {
+  const xAxis = d3.axisBottom(xScale);
+  const yAxis = d3.axisLeft(yScale);
+  return [xAxis, yAxis];
+}
+
+/**
+ *
+ * @param svg
+ * @param height
+ * @param xAxis
+ * @param yAxis
+ */
+function addAxes(
+  svg: any,
+  height: number,
+  xAxis: Axis<number | { valueOf(): number }>,
+  yAxis: Axis<number | { valueOf(): number }>
+) {
+  svg
+    .append("g")
+    .attr("transform", "translate(0," + (height - margin * 2) + ")")
+    .attr("id", "xAxis")
+    .call(xAxis);
+  svg.append("g").attr("id", "yAxis").call(yAxis);
 }
 
 /**
@@ -71,7 +170,7 @@ export async function initScatterPlot(
 function getTotalCasesPerPopulation(
   data: DataSetType[],
   year: number
-): YAxisData[] {
+): CasesPerPopulationData[] {
   const totalCasesPerPopulation = data.map((d) => {
     const totalCases = getItemBasedOnYear<number>(d, year, "total_cases");
     if (!totalCases) {
@@ -84,7 +183,9 @@ function getTotalCasesPerPopulation(
       casesPerPopulation: totalCases / d.population,
     };
   });
-  return totalCasesPerPopulation.filter((d) => d !== null) as YAxisData[];
+  return totalCasesPerPopulation.filter(
+    (d) => d !== null && !isNaN(d.casesPerPopulation)
+  ) as CasesPerPopulationData[];
 }
 
 /**
