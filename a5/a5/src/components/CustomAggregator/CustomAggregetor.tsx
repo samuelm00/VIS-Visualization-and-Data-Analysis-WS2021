@@ -3,16 +3,23 @@ import Select from "../Select/Select";
 import AggregationItem from "./AggregationItem";
 
 const categories = ["People", "Development"];
-const aggregators = {
-  People: ["People > 65", "Handwashing facilities", "Smokers"],
-  Development: ["TBS"],
-};
+
+export interface AggregationProps {
+  People: {
+    "People > 65": number;
+    "Handwashing facilities": number;
+    Smokers: number;
+  };
+  Development: {
+    TBS: number;
+  };
+}
 
 export default function CustomAggregator() {
   const [currentCategory, setCurrentCategory] = useState<
     "People" | "Development"
   >("People");
-  const [weights, setWeights] = useState({
+  const [weights, setWeights] = useState<AggregationProps>({
     People: {
       "People > 65": 1,
       "Handwashing facilities": 1,
@@ -23,7 +30,7 @@ export default function CustomAggregator() {
     },
   });
 
-  const [percentages, setPercentages] = useState({
+  const [percentages, setPercentages] = useState<AggregationProps>({
     People: {
       "People > 65": 0,
       "Handwashing facilities": 0,
