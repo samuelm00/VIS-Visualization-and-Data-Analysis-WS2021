@@ -4,6 +4,7 @@ import Header from "./components/Layout/Header";
 import WorldMap from "./components/WorldMap/WorldMap";
 import Slider from "./components/Slider/Slider";
 import Card from "./components/Card/Card";
+import CustomAggregator from "./components/CustomAggregator/CustomAggregetor";
 
 function App() {
   const [currentYear, setCurrentYear] = React.useState(2006);
@@ -17,6 +18,9 @@ function App() {
           <h3 className={"text font-bold"}>Year:</h3>
           <Slider value={currentYear} setValue={setCurrentYear} />
         </div>
+      </Card>
+      <Card>
+        <CustomAggregator />
       </Card>
     </PageLayout>
   );
