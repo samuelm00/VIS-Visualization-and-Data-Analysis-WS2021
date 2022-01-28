@@ -3,7 +3,7 @@ import React from "react";
 interface SelectProps {
   options: string[];
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setValue: React.Dispatch<React.SetStateAction<any>>;
   label: string;
 }
 
