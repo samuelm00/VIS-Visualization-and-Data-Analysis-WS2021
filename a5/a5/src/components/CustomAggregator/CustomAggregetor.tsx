@@ -52,10 +52,26 @@ export default function CustomAggregator() {
             label={key}
             // @ts-ignore
             weight={weights[currentCategory][key]}
-            setWeight={() => {}}
+            setWeight={(value) =>
+              setWeights({
+                ...weights,
+                [currentCategory]: {
+                  ...weights[currentCategory],
+                  [key]: value,
+                },
+              })
+            }
             // @ts-ignore
             percentage={percentages[currentCategory][key]}
-            setPercentage={() => {}}
+            setPercentage={(value) =>
+              setPercentages({
+                ...percentages,
+                [currentCategory]: {
+                  ...percentages[currentCategory],
+                  [key]: value,
+                },
+              })
+            }
           />
         ))}
       </div>
