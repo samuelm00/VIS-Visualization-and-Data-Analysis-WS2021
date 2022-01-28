@@ -1,10 +1,13 @@
 import React from "react";
+import PageLayout from "./components/Layout/PageLayout";
+import Header from "./components/Layout/Header";
 
 function App() {
   return (
-    <div className="App">
-      <h1 className={"text-2xl font-bold"}>TEST</h1>
-    </div>
+    <PageLayout>
+      <Header variant={"page"}>Page</Header>
+      <Header variant={"section"}>Section</Header>
+    </PageLayout>
   );
 }
 
