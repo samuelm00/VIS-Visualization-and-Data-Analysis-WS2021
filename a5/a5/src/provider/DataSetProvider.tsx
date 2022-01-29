@@ -9,14 +9,19 @@ interface DataSetProviderProps {
 
 export interface DataSetProviderState {
   dataSet: DataSetType[];
+  currentYear: number;
+  setCurrentYear: (year: number) => void;
 }
 
 export const DataSetContext = React.createContext<DataSetProviderState>({
   dataSet: [],
+  currentYear: 2020,
+  setCurrentYear: () => {},
 });
 
 export default function DataSetProvider({ children }: DataSetProviderProps) {
   const [dataset, setDataset] = useState<DataSetType[]>([]);
+  const [currentYear, setCurrentYear] = useState(2020);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +40,9 @@ export default function DataSetProvider({ children }: DataSetProviderProps) {
   }
 
   return (
-    <DataSetContext.Provider value={{ dataSet: dataset }}>
+    <DataSetContext.Provider
+      value={{ dataSet: dataset, currentYear, setCurrentYear }}
+    >
       {children}
     </DataSetContext.Provider>
   );

@@ -11,3 +11,11 @@ export function useDataSet() {
 
   return dataSet;
 }
+
+/**
+ *
+ */
+export function useCurrentYear() {
+  const { currentYear, setCurrentYear } = useContext(DataSetContext);
+  return { currentYear, setCurrentYear };
+}

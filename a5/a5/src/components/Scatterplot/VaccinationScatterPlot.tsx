@@ -1,17 +1,18 @@
 import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
 import { initVaccinationScatterPlot } from "./model.vaccinationScatterplot";
-import { useDataSet } from "../../hooks/hook.dataset";
+import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
 
 export default React.memo(function VaccinationScatterPlot() {
   const dataSet = useDataSet();
+  const { currentYear } = useCurrentYear();
   const [height] = useState(516);
   const [width] = useState(
     (Math.min(window.innerWidth, 1440) - remToPixel(16)) / 2
   );
 
   useLayoutEffect(() => {
-    initVaccinationScatterPlot(height, width, dataSet).then(() => {
+    initVaccinationScatterPlot(height, width, dataSet, currentYear).then(() => {
       console.log("VaccinationScatterPlot initialized");
     });
   }, [height, width]);

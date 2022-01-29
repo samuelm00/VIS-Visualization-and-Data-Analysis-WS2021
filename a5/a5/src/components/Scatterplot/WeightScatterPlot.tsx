@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
 import { initWeightedScatterPlot } from "./model.weightScatterplot";
-import { useDataSet } from "../../hooks/hook.dataset";
-import { data } from "autoprefixer";
+import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
 
 export default React.memo(function WeightScatterPlot() {
+  const { currentYear } = useCurrentYear();
   const dataSet = useDataSet();
   const [height] = useState(516);
   const [width] = useState(
@@ -15,7 +15,7 @@ export default React.memo(function WeightScatterPlot() {
     initWeightedScatterPlot(
       height,
       width,
-      2020,
+      currentYear,
       dataSet,
       {
         People: {

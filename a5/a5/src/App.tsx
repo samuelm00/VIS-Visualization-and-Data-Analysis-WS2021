@@ -11,8 +11,6 @@ import Barchart from "./components/Barchart/Barchart";
 import DataSetProvider from "./provider/DataSetProvider";
 
 function App() {
-  const [currentYear, setCurrentYear] = React.useState(2006);
-
   return (
     <DataSetProvider>
       <PageLayout>
@@ -21,7 +19,7 @@ function App() {
         <Card>
           <div className={"flex justify-center items-center space-x-10"}>
             <h3 className={"text font-bold"}>Year:</h3>
-            <Slider value={currentYear} setValue={setCurrentYear} />
+            <Slider />
           </div>
         </Card>
         <div className="flex justify-between">
