@@ -5,6 +5,7 @@ import {
 } from "../../utils/utils.barchartAggregation";
 
 const margin = 20;
+const fields: (keyof BarchartData)[] = ["newCases", "newVaccinations"];
 
 /**
  *
@@ -15,7 +16,7 @@ function initBarchartContainer(height: number, width: number) {
   const svgElement = d3.select("#barchart");
   return svgElement
     .append("g")
-    .attr("transform", `translate(${margin * 2}, -${margin + 200})`);
+    .attr("transform", `translate(${margin * 2}, -${margin - 10})`);
 }
 
 /**
@@ -28,22 +29,44 @@ export async function initBarchart(height: number, width: number, year = 2020) {
   const svg = initBarchartContainer(height, width);
 
   const data = await getBarchartData(year);
+  const sortedData = data
+    .sort(
+      (a, b) =>
+        b.newVaccinations + b.newCases - (a.newVaccinations + a.newCases)
+    )
+    .slice(0, 30);
 
-  console.log(data);
-
-  const [xAxis, yAxis] = createScales(height, width, data.slice(0, 10));
-  addAxes(svg, height, xAxis, yAxis);
+  const [xAxisNames, xAxisFields, yAxis] = createScales(
+    height,
+    width,
+    sortedData
+  );
+  addAxes(svg, height, xAxisNames, yAxis);
 
   svg
-    .selectAll()
-    .data(data.slice(0, 10))
+    .append("g")
+    .selectAll("g")
+    .data(sortedData)
+    .enter()
+    .append("g")
+    .attr("transform", (d) => {
+      return "translate(" + xAxisNames(d.location) + ",-200)";
+    })
+    .selectAll("rect")
+    .data((d) =>
+      fields.map((key) => ({
+        key: key,
+        value: d[key] as number,
+        location: d.location,
+      }))
+    )
     .enter()
     .append("rect")
-    // @ts-ignore
-    .attr("x", (d) => xAxis(d.location))
-    .attr("y", (d) => yAxis(d.newCases))
-    .attr("height", (d) => height - yAxis(d.newCases))
-    .attr("width", (d) => xAxis.bandwidth());
+    .attr("x", (d) => xAxisFields(d.key) || 0)
+    .attr("y", (d) => yAxis(d.value))
+    .attr("height", (d) => height - yAxis(d.value))
+    .attr("fill", (d) => (d.key === "newVaccinations" ? "#ff5724" : "#009485"))
+    .attr("width", () => xAxisFields.bandwidth());
 }
 
 /**
@@ -56,24 +79,31 @@ function createScales(
   height: number,
   width: number,
   data: BarchartData[]
-): [d3.ScaleBand<string>, d3.ScaleLinear<number, number, never>] {
-  const xScale = d3
+): [
+  d3.ScaleBand<string>,
+  d3.ScaleBand<string>,
+  d3.ScaleLinear<number, number, never>
+] {
+  const xScaleGroup = d3
     .scaleBand()
     .domain(data.map((d) => d.location))
     .range([0, width - margin * 2])
     .padding(0.1);
 
+  const xScale = d3
+    .scaleBand()
+    .domain(fields)
+    .range([0, xScaleGroup.bandwidth()]);
+
   const maxVaccinations = Math.max(...data.map((d) => d.newVaccinations));
   const maxCases = Math.max(...data.map((d) => d.newCases));
-
-  console.log(Math.max(maxCases, maxVaccinations));
 
   const yScale = d3
     .scaleLinear()
     .domain([0, Math.max(maxVaccinations, maxCases)])
-    .range([height, 0]);
+    .range([height - 200, 0]);
 
-  return [xScale, yScale];
+  return [xScaleGroup, xScale, yScale];
 }
 
 /**
@@ -86,8 +116,9 @@ function createScales(
 function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
   svg
     .append("g")
-    .attr("transform", `translate(0, ${height})`)
+    .attr("transform", `translate(0, ${height - 200})`)
     .call(d3.axisBottom(xAxis))
+    // code to rotate the labels from: https://stackoverflow.com/questions/20947488/d3-grouped-bar-chart-how-to-rotate-the-text-of-x-axis-ticks
     .selectAll("text")
     .style("text-anchor", "end")
     .attr("dx", "-.8em")
