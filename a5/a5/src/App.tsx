@@ -42,7 +42,7 @@ function App() {
         <div className={"w-1/2"}>
           <VaccinationScatterPlot />
         </div>
-        <div className="w-1/2">
+        <div>
           <Barchart />
         </div>
       </div>

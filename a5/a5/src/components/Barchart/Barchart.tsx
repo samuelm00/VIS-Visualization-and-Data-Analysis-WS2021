@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
+import { initBarchart } from "./model.barchart";
 
 export default function Barchart() {
   const [height] = useState(516);
   const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
+
+  useLayoutEffect(() => {
+    initBarchart(height, width).then(() => {
+      console.log("Barchart initialized");
+    });
+  }, []);
 
   return (
     <>
