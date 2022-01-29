@@ -15,7 +15,7 @@ function initBarchartContainer(height: number, width: number) {
   const svgElement = d3.select("#barchart");
   return svgElement
     .append("g")
-    .attr("transform", `translate(${margin * 2}, -${margin})`);
+    .attr("transform", `translate(${margin * 2}, -${margin + 200})`);
 }
 
 /**
@@ -66,6 +66,8 @@ function createScales(
   const maxVaccinations = Math.max(...data.map((d) => d.newVaccinations));
   const maxCases = Math.max(...data.map((d) => d.newCases));
 
+  console.log(Math.max(maxCases, maxVaccinations));
+
   const yScale = d3
     .scaleLinear()
     .domain([0, Math.max(maxVaccinations, maxCases)])
@@ -85,6 +87,11 @@ function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
   svg
     .append("g")
     .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(xAxis));
+    .call(d3.axisBottom(xAxis))
+    .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
   svg.append("g").call(d3.axisLeft(yAxis));
 }

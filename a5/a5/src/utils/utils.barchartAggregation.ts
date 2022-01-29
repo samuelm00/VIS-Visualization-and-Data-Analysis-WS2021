@@ -28,8 +28,8 @@ export async function getBarchartData(year: number): Promise<BarchartData[]> {
       }
 
       return {
-        newCases: newCases.reduce((a, b) => a + b, 0),
-        newVaccinations: newVaccinations.reduce((a, b) => a + b, 0),
+        newCases: newCases.reduce((a, b) => a + b, 0) / 100_000,
+        newVaccinations: newVaccinations.reduce((a, b) => a + b, 0) / 100_000,
         location: d.location,
       };
     })

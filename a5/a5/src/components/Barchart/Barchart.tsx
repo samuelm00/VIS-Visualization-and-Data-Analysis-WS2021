@@ -3,7 +3,7 @@ import { remToPixel } from "../../utils/utils.layout";
 import { initBarchart } from "./model.barchart";
 
 export default function Barchart() {
-  const [height] = useState(516);
+  const [height] = useState(716);
   const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
 
   useLayoutEffect(() => {
