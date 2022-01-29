@@ -1,8 +1,8 @@
 import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
-import { initScatterPlot } from "./model.scatterplot";
+import { initScatterPlot } from "./model.weightScatterplot";
 
-export default function Scatterplot() {
+export default function WeightScatterPlot() {
   const [height] = useState(516);
   const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
 

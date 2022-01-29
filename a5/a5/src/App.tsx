@@ -5,9 +5,8 @@ import WorldMap from "./components/WorldMap/WorldMap";
 import Slider from "./components/Slider/Slider";
 import Card from "./components/Card/Card";
 import CustomAggregator from "./components/CustomAggregator/CustomAggregetor";
-import Scatterplot from "./components/Scatterplot/Scatterplot";
+import WeightScatterPlot from "./components/Scatterplot/WeightScatterPlot";
 import LoadingIndicator from "./components/LoadingIndicator";
-import { getDataset } from "./utils/utils.dataset";
 
 function App() {
   const [currentYear, setCurrentYear] = React.useState(2006);
@@ -35,7 +34,7 @@ function App() {
         <Card className={"w-1/2"}>
           <CustomAggregator />
         </Card>
-        <Scatterplot />
+        <WeightScatterPlot />
       </div>
     </PageLayout>
   );

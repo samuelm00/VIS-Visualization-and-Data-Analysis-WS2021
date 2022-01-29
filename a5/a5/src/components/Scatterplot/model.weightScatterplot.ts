@@ -3,20 +3,14 @@ import { getDataset, getItemBasedOnYear } from "../../utils/utils.dataset";
 import { DataSetType } from "../../types/type.dataset";
 import { AggregationProps } from "../CustomAggregator/CustomAggregetor";
 import { Axis, ScaleLinear } from "d3";
+import {
+  CasesPerPopulationData,
+  getDatasetsForWeightedScatterPlot,
+  getTotalCasesPerPopulation,
+  getWeightedData,
+} from "../../utils/utils.weightedAggregation";
 
 const margin = 20;
-
-interface CasesPerPopulationData {
-  location: string;
-  totalCases: number;
-  population: number;
-  casesPerPopulation: number;
-}
-
-interface WeightedData {
-  location: string;
-  weight: number;
-}
 
 /**
  *
@@ -52,31 +46,13 @@ export async function initScatterPlot(
   initScatterPlotContainer(height, width);
   const svg = d3.select("#plot");
 
-  // get and aggregate the data
-  const data = await getDataset();
-  const totalCasesPerPopulation = getTotalCasesPerPopulation(data, year);
-  const weightedData = getWeightedData(
-    data,
-    year,
-    weights,
-    percentages,
-    category
-  );
-  const scatterPlotData = weightedData
-    .map((weightedData) => {
-      const casesPerPopulation = totalCasesPerPopulation.find(
-        (d) => d.location === weightedData.location
-      );
-      if (casesPerPopulation) {
-        return {
-          location: weightedData.location,
-          weight: weightedData.weight,
-          casesPerPopulation: casesPerPopulation.casesPerPopulation,
-        };
-      }
-      return null;
-    })
-    .filter((d) => d !== null);
+  const { totalCasesPerPopulation, scatterPlotData } =
+    await getDatasetsForWeightedScatterPlot(
+      year,
+      weights,
+      percentages,
+      category
+    );
 
   // add and create x and y axis
   const [xScale, yScale] = createScales(
@@ -149,7 +125,6 @@ function createScales(
   const maxCasesPerPopulation = Math.max(
     ...casesPerPopulation.map((d) => d.casesPerPopulation)
   );
-  console.log(casesPerPopulation.map((d) => d.casesPerPopulation));
 
   const xScale = getScale(
     [minCasesPerPopulation, maxCasesPerPopulation],
@@ -201,96 +176,4 @@ function addAxes(
     .attr("id", "xAxis")
     .call(xAxis);
   svg.append("g").attr("id", "yAxis").call(yAxis);
-}
-
-/**
- *
- * @param data
- * @param year
- */
-function getTotalCasesPerPopulation(
-  data: DataSetType[],
-  year: number
-): CasesPerPopulationData[] {
-  const totalCasesPerPopulation = data.map((d) => {
-    const totalCases = getItemBasedOnYear<number>(d, year, "total_cases");
-    if (!totalCases) {
-      return null;
-    }
-    return {
-      location: d.location,
-      totalCases,
-      population: d.population,
-      casesPerPopulation: totalCases / d.population,
-    };
-  });
-  return totalCasesPerPopulation.filter(
-    (d) => d !== null && !isNaN(d.casesPerPopulation)
-  ) as CasesPerPopulationData[];
-}
-
-/**
- *
- * @param data
- * @param year
- * @param weights
- * @param percentages
- * @param category
- */
-function getWeightedData(
-  data: DataSetType[],
-  year: number,
-  weights: AggregationProps,
-  percentages: AggregationProps,
-  category: keyof AggregationProps
-): WeightedData[] {
-  return data.map((d) => {
-    const individualWeightsPercentages = Object.keys(weights[category]).map(
-      (key) => {
-        // @ts-ignore
-        const weight = weights[category][key];
-        // @ts-ignore
-        const percentage = percentages[category][key];
-        return { weight, percentage, key };
-      }
-    );
-    const totalWeight = individualWeightsPercentages.reduce(
-      (acc, curr) =>
-        acc +
-        getWeight(curr.weight, curr.percentage, getValue(d, curr.key, year)),
-      0
-    );
-    return {
-      location: d.location,
-      weight: totalWeight,
-    };
-  });
-}
-
-/**
- *
- * @param value
- * @param weight
- * @param percentage
- */
-function getWeight(weight: number, percentage: number, value?: number) {
-  if (!value) return 0;
-  if (value > percentage) return weight;
-  return 0;
-}
-
-/**
- *
- * @param value
- * @param key
- */
-function getValue(value: DataSetType, key: string, year: number): number {
-  // TODO: ADD MISSING KEYS
-  if (key.toLowerCase().includes("people")) {
-    return value.aged_65_older || 0;
-  }
-  if (key.toLowerCase().includes("smokers")) {
-    return (value.female_smokers || 0) + (value.male_smokers || 0);
-  }
-  return 0;
 }
