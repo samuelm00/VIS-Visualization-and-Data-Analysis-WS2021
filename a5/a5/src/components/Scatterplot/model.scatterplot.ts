@@ -62,8 +62,21 @@ export async function initScatterPlot(
     percentages,
     category
   );
-  console.log("totalCasesPerPopulation", totalCasesPerPopulation);
-  console.log("weightedData", weightedData);
+  const scatterPlotData = weightedData
+    .map((weightedData) => {
+      const casesPerPopulation = totalCasesPerPopulation.find(
+        (d) => d.location === weightedData.location
+      );
+      if (casesPerPopulation) {
+        return {
+          location: weightedData.location,
+          weight: weightedData.weight,
+          casesPerPopulation: casesPerPopulation.casesPerPopulation,
+        };
+      }
+      return null;
+    })
+    .filter((d) => d !== null);
 
   // add and create x and y axis
   const [xScale, yScale] = createScales(
@@ -76,6 +89,18 @@ export async function initScatterPlot(
   );
   const [xAxis, yAxis] = getAxes(xScale, yScale);
   addAxes(svg, height, xAxis, yAxis);
+
+  svg
+    .append("g")
+    .attr("id", "data-points")
+    .selectAll("dot")
+    .data(scatterPlotData)
+    .enter()
+    .append("circle")
+    .attr("cx", (d) => xScale(d!.casesPerPopulation))
+    .attr("cy", (d) => yScale(d!.weight))
+    .attr("r", 3)
+    .attr("fill", "black");
 }
 
 /**
@@ -100,7 +125,7 @@ function createScales(
     (acc, curr) => acc + curr,
     0
   );
-  const xScale = getScale([minWeight, maxWeight], [0, width - margin * 3]);
+  const yScale = getScale([minWeight, maxWeight], [height - margin * 2, 0]);
 
   const minCasesPerPopulation = 0;
 
@@ -108,11 +133,10 @@ function createScales(
     ...casesPerPopulation.map((d) => d.casesPerPopulation)
   );
   console.log(casesPerPopulation.map((d) => d.casesPerPopulation));
-  console.log(maxCasesPerPopulation);
 
-  const yScale = getScale(
+  const xScale = getScale(
     [minCasesPerPopulation, maxCasesPerPopulation],
-    [height - margin * 2, 0]
+    [0, width - margin * 3]
   );
 
   return [xScale, yScale];
