@@ -11,6 +11,7 @@ export interface DataSetType {
 export interface TimeDataMeasurements {
   date: string;
   new_cases?: number;
-  new_vaccinations: number;
+  new_vaccinations?: number;
   total_cases: number;
+  positive_rate?: number;
 }

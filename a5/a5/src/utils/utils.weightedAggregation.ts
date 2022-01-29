@@ -124,6 +124,8 @@ export async function getDatasetsForWeightedScatterPlot(
   category: "People" | "Development"
 ) {
   const data = await getDataset();
+
+  console.log(data);
   const totalCasesPerPopulation = getTotalCasesPerPopulation(data, year);
   const weightedData = getWeightedData(
     data,
