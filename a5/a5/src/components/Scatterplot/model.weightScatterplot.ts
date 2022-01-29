@@ -69,6 +69,7 @@ export async function initWeightedScatterPlot(
     .data(scatterPlotData)
     .enter()
     .append("circle")
+    .attr("z-index", 1)
     .attr("cx", (d) => xScale(d!.casesPerPopulation))
     .attr("cy", (d) => yScale(d!.weight))
     .attr("r", 5)

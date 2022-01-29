@@ -24,11 +24,19 @@ function getNewVaccinationsPerPopulation(
 ): VaccinationPerPopulation[] {
   return data
     .map((d) => {
-      const newVaccinations = getItemBasedOnYear<number>(
+      const newVaccinationsArr = getItemBasedOnYear<number>(
         d,
         year,
         "new_vaccinations"
       );
+
+      if (!newVaccinationsArr.length) {
+        return null;
+      }
+
+      const newVaccinations =
+        newVaccinationsArr.reduce((a, b) => a + b, 0) /
+        newVaccinationsArr.length;
 
       if (!newVaccinations || !d.location) return null;
 
@@ -53,7 +61,19 @@ function getPositiveRateData(
 ): PositiveRate[] {
   return data
     .map((d) => {
-      const positiveRate = getItemBasedOnYear<number>(d, year, "positive_rate");
+      const positiveRateArr = getItemBasedOnYear<number>(
+        d,
+        year,
+        "positive_rate"
+      );
+
+      if (!positiveRateArr.length) {
+        return null;
+      }
+
+      const positiveRate =
+        positiveRateArr.reduce((a, b) => a + b, 0) / positiveRateArr.length;
+
       if (!positiveRate || !d.location) return null;
       return {
         location: d.location,

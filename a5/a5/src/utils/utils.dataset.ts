@@ -18,11 +18,13 @@ export function getItemBasedOnYear<T>(
   data: DataSetType,
   year: number,
   key: keyof TimeDataMeasurements
-): T {
-  return data.data.find(({ date }) => {
-    if (!date) {
-      return false;
-    }
-    return new Date(date).getFullYear() === year;
-  })?.[key] as unknown as T;
+): T[] {
+  return data.data
+    .filter(({ date }) => {
+      if (!date) {
+        return false;
+      }
+      return new Date(date).getFullYear() === year;
+    })
+    .map((d) => d[key]) as unknown as T[];
 }

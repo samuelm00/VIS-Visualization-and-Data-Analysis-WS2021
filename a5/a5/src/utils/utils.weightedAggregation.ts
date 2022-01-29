@@ -24,7 +24,11 @@ export function getTotalCasesPerPopulation(
   year: number
 ): CasesPerPopulationData[] {
   const totalCasesPerPopulation = data.map((d) => {
-    const totalCases = getItemBasedOnYear<number>(d, year, "total_cases");
+    const totalCases = getItemBasedOnYear<number>(
+      d,
+      year,
+      "total_cases"
+    ).reduce((acc, curr) => acc + curr, 0);
     if (!totalCases) {
       return null;
     }
