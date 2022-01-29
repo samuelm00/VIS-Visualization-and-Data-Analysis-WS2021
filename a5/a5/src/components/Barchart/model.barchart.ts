@@ -66,7 +66,25 @@ export async function initBarchart(height: number, width: number, year = 2020) {
     .attr("y", (d) => yAxis(d.value))
     .attr("height", (d) => height - yAxis(d.value))
     .attr("fill", (d) => (d.key === "newVaccinations" ? "#ff5724" : "#009485"))
-    .attr("width", () => xAxisFields.bandwidth());
+    .attr("width", () => xAxisFields.bandwidth())
+    .on("mouseover", function (event, data) {
+      d3.select(this).style("fill", "white");
+      d3.select("#barchart-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(`Location: ${data?.location} <br /> ${data.key}: ${data?.value}`);
+    })
+    .on("mouseout", function (event, data) {
+      d3.select(this).style(
+        "fill",
+        data.key === "newVaccinations" ? "#ff5724" : "#009485"
+      );
+      d3.select("#barchart-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
+    });
 }
 
 /**
