@@ -106,7 +106,7 @@ function createScales(
 
   const xScale = getScale(
     [minPositiveRate, maxPositiveRate],
-    [0, width - margin * 2]
+    [0, width - margin * 3]
   );
 
   const minNewVaccinationsPerPopulation = 0;
