@@ -16,7 +16,7 @@ function initBarchartContainer(height: number, width: number) {
   const svgElement = d3.select("#barchart");
   return svgElement
     .append("g")
-    .attr("transform", `translate(${margin * 2}, -${margin - 10})`);
+    .attr("transform", `translate(${margin * 3}, -${margin - 10})`);
 }
 
 /**
@@ -42,6 +42,7 @@ export async function initBarchart(height: number, width: number, year = 2020) {
     sortedData
   );
   addAxes(svg, height, xAxisNames, yAxis);
+  addYLabel(svg, height);
 
   svg
     .append("g")
@@ -105,7 +106,7 @@ function createScales(
   const xScaleGroup = d3
     .scaleBand()
     .domain(data.map((d) => d.location))
-    .range([0, width - margin * 2])
+    .range([0, width - margin * 3])
     .padding(0.1);
 
   const xScale = d3
@@ -143,4 +144,21 @@ function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
     .attr("dy", ".15em")
     .attr("transform", "rotate(-65)");
   svg.append("g").call(d3.axisLeft(yAxis));
+}
+
+/**
+ *
+ * @param svg
+ * @param height
+ */
+function addYLabel(svg: any, height: number) {
+  svg
+    .append("text")
+    .attr("x", -(height / 2) + 200)
+    .attr("y", -40)
+    .attr("transform", "rotate(-90)")
+    .style("fill", "white")
+    .attr("text-anchor", "start")
+    .attr("class", "text-xs")
+    .text("Population per 100.000");
 }
