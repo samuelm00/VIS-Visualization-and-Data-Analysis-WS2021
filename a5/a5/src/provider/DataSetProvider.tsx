@@ -11,7 +11,7 @@ export interface DataSetProviderState {
   dataSet: DataSetType[];
 }
 
-const DataSetContext = React.createContext<DataSetProviderState>({
+export const DataSetContext = React.createContext<DataSetProviderState>({
   dataSet: [],
 });
 
