@@ -4,7 +4,9 @@ import { initBarchart } from "./model.barchart";
 
 export default function Barchart() {
   const [height] = useState(716);
-  const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
+  const [width] = useState(
+    (Math.min(window.innerWidth, 1440) - remToPixel(16)) / 2
+  );
 
   useLayoutEffect(() => {
     initBarchart(height, width).then(() => {

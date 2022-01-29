@@ -5,8 +5,12 @@ import { remToPixel } from "../../utils/utils.layout";
 const padding = 16;
 
 export default function WorldMap() {
-  const [height] = useState(window.innerHeight - remToPixel(padding));
-  const [width] = useState(window.innerWidth - remToPixel(padding));
+  const [height] = useState(
+    Math.min(window.innerHeight, 900) - remToPixel(padding)
+  );
+  const [width] = useState(
+    Math.min(window.innerWidth, 1440) - remToPixel(padding)
+  );
 
   useLayoutEffect(() => {
     initWorldMap(height, width).then(() => {

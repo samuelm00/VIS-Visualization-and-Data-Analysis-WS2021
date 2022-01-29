@@ -4,7 +4,9 @@ import { initWeightedScatterPlot } from "./model.weightScatterplot";
 
 export default React.memo(function WeightScatterPlot() {
   const [height] = useState(516);
-  const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
+  const [width] = useState(
+    (Math.min(window.innerWidth, 1440) - remToPixel(16)) / 2
+  );
 
   useLayoutEffect(() => {
     initWeightedScatterPlot(

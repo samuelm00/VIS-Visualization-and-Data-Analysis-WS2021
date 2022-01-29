@@ -4,7 +4,9 @@ import { initVaccinationScatterPlot } from "./model.vaccinationScatterplot";
 
 export default React.memo(function VaccinationScatterPlot() {
   const [height] = useState(516);
-  const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
+  const [width] = useState(
+    (Math.min(window.innerWidth, 1440) - remToPixel(16)) / 2
+  );
 
   useLayoutEffect(() => {
     initVaccinationScatterPlot(height, width).then(() => {
