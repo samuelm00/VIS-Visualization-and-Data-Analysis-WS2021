@@ -1,14 +1,14 @@
 import { DataSetType } from "../types/type.dataset";
 import { getDataset, getItemBasedOnYear } from "./utils.dataset";
 
-interface VaccinationPerPopulation {
+export interface VaccinationPerPopulation {
   population: number;
   location: string;
   newVaccinations: number;
   newVaccinationsPerPopulation: number;
 }
 
-interface PositiveRate {
+export interface PositiveRate {
   location: string;
   positiveRate: number;
 }
@@ -22,7 +22,6 @@ function getNewVaccinationsPerPopulation(
   data: DataSetType[],
   year: number
 ): VaccinationPerPopulation[] {
-  console.log(data);
   return data
     .map((d) => {
       const newVaccinations = getItemBasedOnYear<number>(

@@ -135,7 +135,7 @@ function createScales(
  * @param domain
  * @param range
  */
-function getScale(domain: number[], range: number[]) {
+export function getScale(domain: number[], range: number[]) {
   return d3.scaleLinear().domain(domain).range(range);
 }
 
@@ -144,7 +144,7 @@ function getScale(domain: number[], range: number[]) {
  * @param xScale
  * @param yScale
  */
-function getAxes(
+export function getAxes(
   xScale: ScaleLinear<number, number, never>,
   yScale: ScaleLinear<number, number, never>
 ) {
@@ -160,7 +160,7 @@ function getAxes(
  * @param xAxis
  * @param yAxis
  */
-function addAxes(
+export function addAxes(
   svg: any,
   height: number,
   xAxis: Axis<number | { valueOf(): number }>,
