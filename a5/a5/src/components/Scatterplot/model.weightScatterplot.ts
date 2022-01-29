@@ -5,6 +5,7 @@ import {
   CasesPerPopulationData,
   getDatasetsForWeightedScatterPlot,
 } from "../../utils/utils.weightedAggregation";
+import { DataSetType } from "../../types/type.dataset";
 
 const margin = 20;
 
@@ -35,6 +36,7 @@ export async function initWeightedScatterPlot(
   height: number,
   width: number,
   year = 2020,
+  data: DataSetType[],
   weights: AggregationProps,
   percentages: AggregationProps,
   category: keyof AggregationProps
@@ -45,6 +47,7 @@ export async function initWeightedScatterPlot(
   const { totalCasesPerPopulation, scatterPlotData } =
     await getDatasetsForWeightedScatterPlot(
       year,
+      data,
       weights,
       percentages,
       category

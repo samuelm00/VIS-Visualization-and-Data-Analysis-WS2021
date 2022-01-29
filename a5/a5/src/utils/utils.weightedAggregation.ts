@@ -117,17 +117,18 @@ export function getValue(
 /**
  *
  * @param year
+ * @param data
  * @param weights
  * @param percentages
  * @param category
  */
 export async function getDatasetsForWeightedScatterPlot(
   year: number,
+  data: DataSetType[],
   weights: AggregationProps,
   percentages: AggregationProps,
   category: "People" | "Development"
 ) {
-  const data = await getDataset();
   const totalCasesPerPopulation = getTotalCasesPerPopulation(data, year);
   const weightedData = getWeightedData(
     data,

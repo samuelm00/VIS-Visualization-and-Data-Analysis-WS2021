@@ -1,8 +1,11 @@
 import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
 import { initWeightedScatterPlot } from "./model.weightScatterplot";
+import { useDataSet } from "../../hooks/hook.dataset";
+import { data } from "autoprefixer";
 
 export default React.memo(function WeightScatterPlot() {
+  const dataSet = useDataSet();
   const [height] = useState(516);
   const [width] = useState(
     (Math.min(window.innerWidth, 1440) - remToPixel(16)) / 2
@@ -13,6 +16,7 @@ export default React.memo(function WeightScatterPlot() {
       height,
       width,
       2020,
+      dataSet,
       {
         People: {
           "People > 65": 1,
