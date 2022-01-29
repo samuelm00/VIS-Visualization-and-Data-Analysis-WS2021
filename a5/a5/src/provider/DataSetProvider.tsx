@@ -35,7 +35,7 @@ export default function DataSetProvider({ children }: DataSetProviderProps) {
   }
 
   return (
-    <DataSetContext.Provider value={{ dataSet: [] }}>
+    <DataSetContext.Provider value={{ dataSet: dataset }}>
       {children}
     </DataSetContext.Provider>
   );

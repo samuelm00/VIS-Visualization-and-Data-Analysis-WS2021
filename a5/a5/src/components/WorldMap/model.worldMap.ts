@@ -6,8 +6,13 @@ import {
   geoEqualEarth,
   geoEquirectangular,
 } from "d3";
+import { DataSetType } from "../../types/type.dataset";
 
-export async function initWorldMap(height: number, width: number) {
+export async function initWorldMap(
+  height: number,
+  width: number,
+  dataSet: DataSetType[]
+) {
   const svg = select("#world-map");
   const projection = geoEquirectangular().fitSize([width, height], {
     type: "Sphere",

@@ -3,6 +3,7 @@ import {
   BarchartData,
   getBarchartData,
 } from "../../utils/utils.barchartAggregation";
+import { DataSetType } from "../../types/type.dataset";
 
 const margin = 20;
 const fields: (keyof BarchartData)[] = ["newCases", "newVaccinations"];
@@ -24,11 +25,17 @@ function initBarchartContainer(height: number, width: number) {
  * @param height
  * @param width
  * @param year
+ * @param dataSet
  */
-export async function initBarchart(height: number, width: number, year = 2020) {
+export async function initBarchart(
+  height: number,
+  width: number,
+  year: number,
+  dataSet: DataSetType[]
+) {
   const svg = initBarchartContainer(height, width);
 
-  const data = await getBarchartData(year);
+  const data = getBarchartData(dataSet, year);
   const sortedData = data
     .sort(
       (a, b) =>

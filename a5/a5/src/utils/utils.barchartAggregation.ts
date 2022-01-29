@@ -1,4 +1,5 @@
 import { getDataset, getItemBasedOnYear } from "./utils.dataset";
+import { DataSetType } from "../types/type.dataset";
 
 export interface BarchartData {
   location: string;
@@ -8,10 +9,13 @@ export interface BarchartData {
 
 /**
  *
+ * @param data
  * @param year
  */
-export async function getBarchartData(year: number): Promise<BarchartData[]> {
-  const data = await getDataset();
+export function getBarchartData(
+  data: DataSetType[],
+  year: number
+): BarchartData[] {
   return data
     .map((d) => {
       const newCases = getItemBasedOnYear<number>(d, year, "new_cases").filter(
