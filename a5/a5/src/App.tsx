@@ -7,6 +7,7 @@ import Card from "./components/Card/Card";
 import CustomAggregator from "./components/CustomAggregator/CustomAggregetor";
 import WeightScatterPlot from "./components/Scatterplot/WeightScatterPlot";
 import LoadingIndicator from "./components/LoadingIndicator";
+import VaccinationScatterPlot from "./components/Scatterplot/VaccinationScatterPlot";
 
 function App() {
   const [currentYear, setCurrentYear] = React.useState(2006);
@@ -35,6 +36,11 @@ function App() {
           <CustomAggregator />
         </Card>
         <WeightScatterPlot />
+      </div>
+      <div className="flex justify-between">
+        <div className={"w-1/2"}>
+          <VaccinationScatterPlot />
+        </div>
       </div>
     </PageLayout>
   );

@@ -1,13 +1,9 @@
 import * as d3 from "d3";
-import { getDataset, getItemBasedOnYear } from "../../utils/utils.dataset";
-import { DataSetType } from "../../types/type.dataset";
 import { AggregationProps } from "../CustomAggregator/CustomAggregetor";
 import { Axis, ScaleLinear } from "d3";
 import {
   CasesPerPopulationData,
   getDatasetsForWeightedScatterPlot,
-  getTotalCasesPerPopulation,
-  getWeightedData,
 } from "../../utils/utils.weightedAggregation";
 
 const margin = 20;
@@ -35,7 +31,7 @@ function initScatterPlotContainer(height: number, width: number) {
  * @param percentages
  * @param category
  */
-export async function initScatterPlot(
+export async function initWeightedScatterPlot(
   height: number,
   width: number,
   year = 2020,
