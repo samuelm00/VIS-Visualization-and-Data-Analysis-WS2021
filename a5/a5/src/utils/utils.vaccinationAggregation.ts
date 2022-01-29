@@ -85,10 +85,13 @@ function getPositiveRateData(
 
 /**
  *
+ * @param data
  * @param year
  */
-export async function getVaccinationScatterPlotData(year: number) {
-  const data = await getDataset();
+export async function getVaccinationScatterPlotData(
+  data: DataSetType[],
+  year: number
+) {
   const newVaccinationsPerPopulation = getNewVaccinationsPerPopulation(
     data,
     year

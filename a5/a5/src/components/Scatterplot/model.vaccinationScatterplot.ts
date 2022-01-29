@@ -10,6 +10,7 @@ import {
   getAxes,
   getScale,
 } from "./model.weightScatterplot";
+import { DataSetType } from "../../types/type.dataset";
 
 const margin = 20;
 
@@ -37,13 +38,14 @@ function initScatterPlotContainer(height: number, width: number) {
 export async function initVaccinationScatterPlot(
   height: number,
   width: number,
+  data: DataSetType[],
   year = 2022,
   location?: string
 ) {
   initScatterPlotContainer(height, width);
   const svg = d3.select("#vaccination-plot");
   const { newVaccinationsPerPopulation, positiveRateData, scatterPlotData } =
-    await getVaccinationScatterPlotData(year);
+    await getVaccinationScatterPlotData(data, year);
 
   const [xScale, yScale] = createScales(
     height,
