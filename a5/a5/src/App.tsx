@@ -8,6 +8,7 @@ import CustomAggregator from "./components/CustomAggregator/CustomAggregetor";
 import WeightScatterPlot from "./components/Scatterplot/WeightScatterPlot";
 import LoadingIndicator from "./components/LoadingIndicator";
 import VaccinationScatterPlot from "./components/Scatterplot/VaccinationScatterPlot";
+import Barchart from "./components/Barchart/Barchart";
 
 function App() {
   const [currentYear, setCurrentYear] = React.useState(2006);
@@ -40,6 +41,9 @@ function App() {
       <div className="flex justify-between">
         <div className={"w-1/2"}>
           <VaccinationScatterPlot />
+        </div>
+        <div className="w-1/2">
+          <Barchart />
         </div>
       </div>
     </PageLayout>
