@@ -35,5 +35,15 @@ export default function Scatterplot() {
     );
   }, []);
 
-  return <svg id={"scatter-plot"} height={height} width={width} />;
+  return (
+    <>
+      <svg id={"scatter-plot"} height={height} width={width} />
+      <div
+        id={"scatter-tooltip"}
+        className={
+          "absolute bg-base-100 px-2 border-2 border-base-200 opacity-0"
+        }
+      />
+    </>
+  );
 }

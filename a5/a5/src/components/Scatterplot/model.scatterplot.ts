@@ -99,8 +99,25 @@ export async function initScatterPlot(
     .append("circle")
     .attr("cx", (d) => xScale(d!.casesPerPopulation))
     .attr("cy", (d) => yScale(d!.weight))
-    .attr("r", 3)
-    .attr("fill", "black");
+    .attr("r", 5)
+    .attr("fill", "black")
+    .on("mouseover", function (event, data) {
+      d3.select(this).style("fill", "red");
+      d3.select("#scatter-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(
+          `State: ${data?.location} <br /> Cases/Populatin: ${data?.casesPerPopulation} <br /> Weight: ${data?.weight}`
+        );
+    })
+    .on("mouseout", function (event, data) {
+      d3.select(this).style("fill", "black");
+      d3.select("#scatter-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
+    });
 }
 
 /**
