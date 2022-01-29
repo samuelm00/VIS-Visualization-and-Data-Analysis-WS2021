@@ -48,6 +48,36 @@ export async function initVaccinationScatterPlot(
   );
   const [xAxis, yAxis] = getAxes(xScale, yScale);
   addAxes(svg, height, xAxis, yAxis);
+
+  svg
+    .append("g")
+    .attr("id", "data-points")
+    .selectAll("dot")
+    .data(scatterPlotData)
+    .enter()
+    .append("circle")
+    .attr("z-index", 1)
+    .attr("cx", (d) => xScale(d!.positiveRate))
+    .attr("cy", (d) => yScale(d!.newVaccinationsPerPopulation))
+    .attr("r", 5)
+    .attr("fill", "black")
+    .on("mouseover", function (event, data) {
+      d3.select(this).style("fill", "red");
+      d3.select("#vaccination-scatter-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(
+          `State: ${data?.location} <br /> New-Vaccinations/Populatin: ${data?.newVaccinationsPerPopulation} <br /> Positiverate: ${data?.positiveRate}`
+        );
+    })
+    .on("mouseout", function (event, data) {
+      d3.select(this).style("fill", "black");
+      d3.select("#vaccination-scatter-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
+    });
 }
 
 /**
@@ -67,20 +97,21 @@ function createScales(
   const maxPositiveRate = Math.max(
     ...positiveRateData.map((d) => d.positiveRate)
   );
-  const yScale = getScale(
+
+  const xScale = getScale(
     [minPositiveRate, maxPositiveRate],
-    [height - margin * 2, 0]
+    [0, width - margin * 3]
   );
 
-  const minNewCasesPerPopulation = 0;
+  const minNewVaccinationsPerPopulation = 0;
 
-  const maxNewCasesPopulation = Math.max(
+  const maxNewVaccinationsPerPopulation = Math.max(
     ...newVaccinationsPerPopulation.map((d) => d.newVaccinationsPerPopulation)
   );
 
-  const xScale = getScale(
-    [minNewCasesPerPopulation, maxNewCasesPopulation],
-    [0, width - margin * 3]
+  const yScale = getScale(
+    [minNewVaccinationsPerPopulation, maxNewVaccinationsPerPopulation],
+    [height - margin * 2, 0]
   );
 
   return [xScale, yScale];

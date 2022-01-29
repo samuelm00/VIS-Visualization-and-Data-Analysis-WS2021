@@ -28,7 +28,7 @@ function getNewVaccinationsPerPopulation(
         d,
         year,
         "new_vaccinations"
-      );
+      ).filter((v) => v);
 
       if (!newVaccinationsArr.length) {
         return null;
@@ -65,7 +65,7 @@ function getPositiveRateData(
         d,
         year,
         "positive_rate"
-      );
+      ).filter((d) => d);
 
       if (!positiveRateArr.length) {
         return null;
@@ -94,18 +94,19 @@ export async function getVaccinationScatterPlotData(year: number) {
     year
   );
   const positiveRateData = getPositiveRateData(data, year);
-  const scatterPlotData = positiveRateData.map((d) => {
-    const newVaccinationsPerPopulationData = newVaccinationsPerPopulation.find(
-      (d2) => d2.location === d.location
-    );
-    if (!newVaccinationsPerPopulationData) return null;
-    return {
-      location: d.location,
-      positiveRate: d.positiveRate,
-      newVaccinationsPerPopulation:
-        newVaccinationsPerPopulationData.newVaccinationsPerPopulation,
-    };
-  });
+  const scatterPlotData = positiveRateData
+    .map((d) => {
+      const newVaccinationsPerPopulationData =
+        newVaccinationsPerPopulation.find((d2) => d2.location === d.location);
+      if (!newVaccinationsPerPopulationData) return null;
+      return {
+        location: d.location,
+        positiveRate: d.positiveRate,
+        newVaccinationsPerPopulation:
+          newVaccinationsPerPopulationData.newVaccinationsPerPopulation,
+      };
+    })
+    .filter((d) => d !== null);
   return {
     scatterPlotData,
     newVaccinationsPerPopulation,
