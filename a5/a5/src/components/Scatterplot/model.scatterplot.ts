@@ -29,7 +29,7 @@ function initScatterPlotContainer(height: number, width: number) {
     .attr("height", height - margin * 2)
     .attr("width", width - margin * 3)
     .attr("id", "plot")
-    .attr("transform", "translate(" + margin * 3 + "," + 0 + ")");
+    .attr("transform", "translate(" + margin * 2 + "," + margin + ")");
 }
 
 /**

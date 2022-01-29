@@ -31,7 +31,7 @@ function App() {
           <Slider value={currentYear} setValue={setCurrentYear} />
         </div>
       </Card>
-      <div className="flex">
+      <div className="flex justify-between">
         <Card className={"w-1/2"}>
           <CustomAggregator />
         </Card>
