@@ -2,14 +2,15 @@ import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
 import { initVaccinationScatterPlot } from "./model.vaccinationScatterplot";
 
-export default function VaccinationScatterPlot() {
+export default React.memo(function VaccinationScatterPlot() {
   const [height] = useState(516);
   const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
 
   useLayoutEffect(() => {
-    initVaccinationScatterPlot(height, width);
-    console.log("here");
-  }, []);
+    initVaccinationScatterPlot(height, width).then(() => {
+      console.log("VaccinationScatterPlot initialized");
+    });
+  }, [height, width]);
 
   return (
     <>
@@ -22,4 +23,4 @@ export default function VaccinationScatterPlot() {
       />
     </>
   );
-}
+});

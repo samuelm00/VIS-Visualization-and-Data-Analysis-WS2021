@@ -22,22 +22,25 @@ function getNewVaccinationsPerPopulation(
   data: DataSetType[],
   year: number
 ): VaccinationPerPopulation[] {
-  return data.map((d) => {
-    const newVaccinations = getItemBasedOnYear<number>(
-      d,
-      year,
-      "new_vaccinations"
-    );
+  console.log(data);
+  return data
+    .map((d) => {
+      const newVaccinations = getItemBasedOnYear<number>(
+        d,
+        year,
+        "new_vaccinations"
+      );
 
-    if (!newVaccinations || !d.location) return null;
+      if (!newVaccinations || !d.location) return null;
 
-    return {
-      location: d.location,
-      newVaccinations,
-      population: d.population,
-      newVaccinationsPerPopulation: newVaccinations / d.population,
-    };
-  }) as VaccinationPerPopulation[];
+      return {
+        location: d.location,
+        newVaccinations,
+        population: d.population,
+        newVaccinationsPerPopulation: newVaccinations / d.population,
+      };
+    })
+    .filter((d) => d !== null) as VaccinationPerPopulation[];
 }
 
 /**
@@ -49,14 +52,16 @@ function getPositiveRateData(
   data: DataSetType[],
   year: number
 ): PositiveRate[] {
-  return data.map((d) => {
-    const positiveRate = getItemBasedOnYear<number>(d, year, "positive_rate");
-    if (!positiveRate || !d.location) return null;
-    return {
-      location: d.location,
-      positiveRate,
-    };
-  }) as PositiveRate[];
+  return data
+    .map((d) => {
+      const positiveRate = getItemBasedOnYear<number>(d, year, "positive_rate");
+      if (!positiveRate || !d.location) return null;
+      return {
+        location: d.location,
+        positiveRate,
+      };
+    })
+    .filter((d) => d !== null) as PositiveRate[];
 }
 
 /**

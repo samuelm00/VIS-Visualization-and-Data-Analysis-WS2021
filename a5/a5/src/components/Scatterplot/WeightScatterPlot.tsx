@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
 import { initWeightedScatterPlot } from "./model.weightScatterplot";
 
-export default function WeightScatterPlot() {
+export default React.memo(function WeightScatterPlot() {
   const [height] = useState(516);
   const [width] = useState((window.innerWidth - remToPixel(16)) / 2);
 
@@ -46,4 +46,4 @@ export default function WeightScatterPlot() {
       />
     </>
   );
-}
+});

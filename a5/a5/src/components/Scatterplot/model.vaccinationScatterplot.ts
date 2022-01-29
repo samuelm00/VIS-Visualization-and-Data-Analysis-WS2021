@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { getVaccinationScatterPlotData } from "../../utils/utils.vaccinationAggregation";
 
 const margin = 20;
 
@@ -14,8 +15,10 @@ function initScatterPlotContainer(height: number, width: number) {
 export async function initVaccinationScatterPlot(
   height: number,
   width: number,
-  year = 2020,
+  year = 2022,
   location?: string
 ) {
-  initVaccinationScatterPlot(height, width);
+  initScatterPlotContainer(height, width);
+  const { newVaccinationsPerPopulation, positiveRateData, scatterPlotData } =
+    await getVaccinationScatterPlotData(year);
 }
