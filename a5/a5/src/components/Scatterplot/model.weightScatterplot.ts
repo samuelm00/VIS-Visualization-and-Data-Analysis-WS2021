@@ -17,9 +17,9 @@ function initScatterPlotContainer(height: number, width: number) {
   d3.select(`#scatter-plot`)
     .append("g")
     .attr("height", height - margin * 2)
-    .attr("width", width - margin * 3)
+    .attr("width", width - margin * 2)
     .attr("id", "plot")
-    .attr("transform", "translate(" + margin * 2 + "," + margin + ")");
+    .attr("transform", "translate(" + margin * 2.6 + "," + margin + ")");
 }
 
 /**
@@ -61,6 +61,7 @@ export async function initWeightedScatterPlot(
   );
   const [xAxis, yAxis] = getAxes(xScale, yScale);
   addAxes(svg, height, xAxis, yAxis);
+  addLabels(svg, height, width, "Weights", "Cases/Population");
 
   svg
     .append("g")
@@ -173,4 +174,39 @@ export function addAxes(
     .attr("id", "xAxis")
     .call(xAxis);
   svg.append("g").attr("id", "yAxis").call(yAxis);
+}
+
+/**
+ *
+ * @param svg
+ * @param height
+ * @param width
+ * @param xLabel
+ * @param yLabel
+ */
+export function addLabels(
+  svg: any,
+  height: number,
+  width: number,
+  xLabel: string,
+  yLabel: string
+) {
+  svg
+    .append("text")
+    .attr("x", -margin * 4)
+    .attr("y", -40)
+    .attr("transform", "rotate(-90)")
+    .style("fill", "white")
+    .attr("text-anchor", "middle")
+    .attr("class", "text-xs")
+    .text(xLabel);
+
+  svg
+    .append("text")
+    .attr("x", width - margin * 8)
+    .attr("y", 470)
+    .style("fill", "white")
+    .attr("text-anchor", "start")
+    .attr("class", "text-xs")
+    .text(yLabel);
 }

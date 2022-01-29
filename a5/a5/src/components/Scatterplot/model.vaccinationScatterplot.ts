@@ -4,7 +4,12 @@ import {
   PositiveRate,
   VaccinationPerPopulation,
 } from "../../utils/utils.vaccinationAggregation";
-import { addAxes, getAxes, getScale } from "./model.weightScatterplot";
+import {
+  addAxes,
+  addLabels,
+  getAxes,
+  getScale,
+} from "./model.weightScatterplot";
 
 const margin = 20;
 
@@ -17,9 +22,9 @@ function initScatterPlotContainer(height: number, width: number) {
   d3.select(`#vaccination-scatter-plot`)
     .append("g")
     .attr("height", height - margin * 2)
-    .attr("width", width - margin * 3)
+    .attr("width", width - margin * 2)
     .attr("id", "vaccination-plot")
-    .attr("transform", "translate(" + margin * 2 + "," + margin + ")");
+    .attr("transform", "translate(" + margin * 2.6 + "," + margin + ")");
 }
 
 /**
@@ -48,6 +53,7 @@ export async function initVaccinationScatterPlot(
   );
   const [xAxis, yAxis] = getAxes(xScale, yScale);
   addAxes(svg, height, xAxis, yAxis);
+  addLabels(svg, height, width, "Vaccination/Population", "Positive Rate");
 
   svg
     .append("g")
@@ -100,7 +106,7 @@ function createScales(
 
   const xScale = getScale(
     [minPositiveRate, maxPositiveRate],
-    [0, width - margin * 3]
+    [0, width - margin * 2]
   );
 
   const minNewVaccinationsPerPopulation = 0;
