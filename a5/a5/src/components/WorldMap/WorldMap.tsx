@@ -1,8 +1,9 @@
 import React, { useLayoutEffect, useState } from "react";
-import { initWorldMap } from "./model.worldMap";
+import { initWorldMap, updateWorldMap } from "./model.worldMap";
 import { remToPixel } from "../../utils/utils.layout";
 import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
 import { useCustomAggregation } from "../../hooks/hook.aggregation";
+import { curveCatmullRom } from "d3";
 
 const padding = 16;
 
@@ -30,6 +31,20 @@ export default function WorldMap() {
       console.log("map finished drawing");
     });
   }, []);
+
+  useLayoutEffect(() => {
+    updateWorldMap(
+      height,
+      width,
+      dataSet,
+      currentYear,
+      weights,
+      percentages,
+      currentCategory
+    ).then(() => {
+      console.log("map finished drawing");
+    });
+  }, [currentYear, currentCategory, weights, percentages]);
 
   return (
     <div className={"flex justify-center"}>

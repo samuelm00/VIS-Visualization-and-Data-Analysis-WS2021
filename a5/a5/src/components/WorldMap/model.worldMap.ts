@@ -127,6 +127,51 @@ export async function initWorldMap(
     });
 }
 
+export async function updateWorldMap(
+  height: number,
+  width: number,
+  dataSet: DataSetType[],
+  year: number,
+  weights: AggregationProps,
+  percentages: AggregationProps,
+  category: AggregationCategory
+) {
+  const svg = select("#world-map");
+  const geoData: any = await json(
+    "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
+  );
+
+  const { totalCasesPerPopulation, scatterPlotData } =
+    getDatasetsForWeightedScatterPlot(
+      year,
+      dataSet,
+      weights,
+      percentages,
+      category
+    );
+
+  const [xDomain, yDomain] = getThresholdDomain(scatterPlotData);
+  const xColor = scaleThreshold().domain(xDomain).range(range(n));
+  const yColor = scaleThreshold().domain(yDomain).range(range(n));
+
+  svg
+    .selectAll("path")
+    .data(geoData.features as any[])
+    .transition()
+    .duration(200)
+    .attr("fill", (d) => {
+      const value = scatterPlotData.find(
+        (c) => c!.location.toLowerCase() === d.properties.name.toLowerCase()
+      );
+      if (value) {
+        const x = xColor(value.casesPerPopulation);
+        const y = yColor(value.casesPerPopulation);
+        return getColor(x, y);
+      }
+      return "black";
+    });
+}
+
 /**
  *
  * @param data
