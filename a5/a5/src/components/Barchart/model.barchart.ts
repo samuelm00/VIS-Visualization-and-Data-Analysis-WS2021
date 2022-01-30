@@ -8,6 +8,18 @@ import { Axis, ScaleBand, ScaleLinear } from "d3";
 
 const margin = 20;
 const fields: (keyof BarchartData)[] = ["newCases", "newVaccinations"];
+const excludedLocations = [
+  "World",
+  "High income",
+  "North America",
+  "Upper middle income",
+  "United States",
+  "Europe",
+  "Asia",
+  "Lower middle income",
+  "European Union",
+  "South America",
+];
 
 /**
  *
@@ -72,6 +84,7 @@ export function updateBarchart(
   const svg = d3.select("#barchart-container");
   const data = getBarchartData(dataSet, year);
   const sortedData = data
+    .filter((d) => !excludedLocations.includes(d.location))
     .sort(
       (a, b) =>
         b.newVaccinations + b.newCases - (a.newVaccinations + a.newCases)
@@ -119,7 +132,8 @@ function addBars(
     .append("rect")
     .attr("x", (d) => xAxisFields(d.key) || 0)
     .attr("y", (d) => yAxis(d.value))
-    .attr("height", (d) => height - yAxis(d.value))
+    .attr("height", (d) => height - 200 - yAxis(d.value))
+    .attr("transform", "translate(0,200)")
     .attr("fill", (d) => (d.key === "newVaccinations" ? "#009485" : "#ff5724"))
     .attr("width", () => xAxisFields.bandwidth())
     .on("mouseover", function (event, data) {
