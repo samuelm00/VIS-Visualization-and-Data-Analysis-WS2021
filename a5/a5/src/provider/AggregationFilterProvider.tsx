@@ -5,7 +5,7 @@ interface AggregationFilterProvider {
   children: React.ReactNode;
 }
 
-type AggregationCategory = "People" | "Development";
+export type AggregationCategory = "People" | "Development";
 
 interface AggregationFilterContextState {
   weights: AggregationProps;

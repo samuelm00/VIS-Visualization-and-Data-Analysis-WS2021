@@ -2,11 +2,13 @@ import React, { useLayoutEffect, useState } from "react";
 import { initWorldMap } from "./model.worldMap";
 import { remToPixel } from "../../utils/utils.layout";
 import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
+import { useCustomAggregation } from "../../hooks/hook.aggregation";
 
 const padding = 16;
 
 export default function WorldMap() {
   const dataSet = useDataSet();
+  const { weights, percentages, currentCategory } = useCustomAggregation();
   const { currentYear } = useCurrentYear();
   const [height] = useState(
     Math.min(window.innerHeight, 900) - remToPixel(padding)
@@ -16,7 +18,15 @@ export default function WorldMap() {
   );
 
   useLayoutEffect(() => {
-    initWorldMap(height, width, dataSet).then(() => {
+    initWorldMap(
+      height,
+      width,
+      dataSet,
+      currentYear,
+      weights,
+      percentages,
+      currentCategory
+    ).then(() => {
       console.log("map finished drawing");
     });
   }, []);
