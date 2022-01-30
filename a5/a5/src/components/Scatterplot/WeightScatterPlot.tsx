@@ -38,7 +38,7 @@ export default React.memo(function WeightScatterPlot() {
       percentages,
       currentCategory
     );
-  }, [currentYear]);
+  }, [currentYear, currentCategory, weights, percentages]);
 
   return (
     <>
