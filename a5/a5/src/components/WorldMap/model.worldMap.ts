@@ -141,14 +141,13 @@ export async function updateWorldMap(
     "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
   );
 
-  const { totalCasesPerPopulation, scatterPlotData } =
-    getDatasetsForWeightedScatterPlot(
-      year,
-      dataSet,
-      weights,
-      percentages,
-      category
-    );
+  const { scatterPlotData } = getDatasetsForWeightedScatterPlot(
+    year,
+    dataSet,
+    weights,
+    percentages,
+    category
+  );
 
   const [xDomain, yDomain] = getThresholdDomain(scatterPlotData);
   const xColor = scaleThreshold().domain(xDomain).range(range(n));

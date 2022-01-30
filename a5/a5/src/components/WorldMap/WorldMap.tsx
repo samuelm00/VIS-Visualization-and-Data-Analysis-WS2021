@@ -3,7 +3,6 @@ import { initWorldMap, updateWorldMap } from "./model.worldMap";
 import { remToPixel } from "../../utils/utils.layout";
 import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
 import { useCustomAggregation } from "../../hooks/hook.aggregation";
-import { curveCatmullRom } from "d3";
 
 const padding = 16;
 

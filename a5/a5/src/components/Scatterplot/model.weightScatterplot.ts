@@ -80,24 +80,8 @@ export function initWeightedScatterPlot(
     .attr("cx", (d) => xScale(d!.casesPerPopulation))
     .attr("cy", (d) => yScale(d!.weight))
     .attr("r", 5)
-    .attr("fill", "black")
-    .on("mouseover", function (event, data) {
-      d3.select(this).style("fill", "red");
-      d3.select("#scatter-tooltip")
-        .style("display", "block")
-        .style("opacity", 1)
-        .style("right", window.innerWidth - event.pageX - 5 + "px")
-        .style("top", event.pageY + "px")
-        .html(
-          `State: ${data?.location} <br /> Cases/Populatin: ${data?.casesPerPopulation} <br /> Weight: ${data?.weight}`
-        );
-    })
-    .on("mouseout", function (event, data) {
-      d3.select(this).style("fill", "black");
-      d3.select("#scatter-tooltip")
-        .style("opacity", "0")
-        .style("right", "-1000px");
-    });
+    .attr("fill", "black");
+  addHoverEffect(svg, scatterPlotData);
 }
 
 /**
@@ -141,13 +125,59 @@ export function updateWeightedScatterPlot(
   const [xAxis, yAxis] = getAxes(xScale, yScale);
   updateAxes(svg, xAxis, yAxis);
 
+  svg.selectAll("circle").remove();
+
+  svg
+    .append("g")
+    .attr("id", "data-points")
+    .selectAll("dot")
+    .data(scatterPlotData)
+    .enter()
+    .append("circle")
+    .transition()
+    .duration(1000)
+    .attr("z-index", 1)
+    .attr("cx", (d) => xScale(d!.casesPerPopulation))
+    .attr("cy", (d) => yScale(d!.weight))
+    .attr("r", 5)
+    .attr("fill", "black");
+
+  addHoverEffect(svg, scatterPlotData);
+}
+
+/**
+ *
+ * @param svg
+ * @param scatterPlotData
+ */
+function addHoverEffect(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  scatterPlotData: ({
+    location: string;
+    weight: number;
+    casesPerPopulation: number;
+  } | null)[]
+) {
   svg
     .selectAll("circle")
     .data(scatterPlotData)
-    .transition()
-    .duration(1000)
-    .attr("cx", (d) => xScale(d!.casesPerPopulation))
-    .attr("cy", (d) => yScale(d!.weight));
+    .on("mouseover", function (event, data) {
+      d3.select(this).style("fill", "red");
+      d3.select("#scatter-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("right", window.innerWidth - event.pageX - 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(
+          `State: ${data?.location} <br /> Cases/Populatin: ${data?.casesPerPopulation} <br /> Weight: ${data?.weight}`
+        );
+    })
+    .on("mouseout", function (event, data) {
+      d3.select(this).style("fill", "black");
+      d3.select("#scatter-tooltip")
+        .style("opacity", "0")
+        .style("right", "-1000px");
+    });
 }
 
 /**
