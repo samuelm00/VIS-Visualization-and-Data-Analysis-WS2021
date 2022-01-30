@@ -1,11 +1,4 @@
-import {
-  select,
-  json,
-  geoPath,
-  geoMercator,
-  geoEqualEarth,
-  geoEquirectangular,
-} from "d3";
+import { select, json, geoPath, geoEquirectangular } from "d3";
 import { DataSetType } from "../../types/type.dataset";
 
 export async function initWorldMap(
@@ -34,5 +27,20 @@ export async function initWorldMap(
     .attr("stroke", "#3d4451")
     .attr("fill", (d) => {
       return "white";
+    })
+    .on("mouseover", function (event, data) {
+      select(this).attr("fill", "black");
+      select("#world-map-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(`State: ${data.properties.name}`);
+    })
+    .on("mouseout", function () {
+      select(this).attr("fill", "white");
+      select("#world-map-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
     });
 }

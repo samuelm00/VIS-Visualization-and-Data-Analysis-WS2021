@@ -24,6 +24,12 @@ export default function WorldMap() {
   return (
     <div className={"flex justify-center"}>
       <svg id={"world-map"} height={height} width={width} />
+      <div
+        id={"world-map-tooltip"}
+        className={
+          "absolute bg-base-100 px-2 border-2 border-base-200 opacity-0"
+        }
+      />
     </div>
   );
 }
