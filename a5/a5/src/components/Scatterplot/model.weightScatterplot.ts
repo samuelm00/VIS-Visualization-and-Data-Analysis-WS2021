@@ -84,7 +84,7 @@ export function initWeightedScatterPlot(
       d3.select("#scatter-tooltip")
         .style("display", "block")
         .style("opacity", 1)
-        .style("left", event.pageX + 5 + "px")
+        .style("right", window.innerWidth - event.pageX - 5 + "px")
         .style("top", event.pageY + "px")
         .html(
           `State: ${data?.location} <br /> Cases/Populatin: ${data?.casesPerPopulation} <br /> Weight: ${data?.weight}`
@@ -94,7 +94,7 @@ export function initWeightedScatterPlot(
       d3.select(this).style("fill", "black");
       d3.select("#scatter-tooltip")
         .style("opacity", "0")
-        .style("left", "-1000px");
+        .style("right", "-1000px");
     });
 }
 

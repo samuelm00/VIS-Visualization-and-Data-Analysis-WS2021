@@ -141,7 +141,7 @@ function addBars(
       d3.select("#barchart-tooltip")
         .style("display", "block")
         .style("opacity", 1)
-        .style("left", event.pageX + 5 + "px")
+        .style("right", window.innerWidth - event.pageX - 5 + "px")
         .style("top", event.pageY + "px")
         .html(`Location: ${data?.location} <br /> ${data.key}: ${data?.value}`);
     })
@@ -152,7 +152,7 @@ function addBars(
       );
       d3.select("#barchart-tooltip")
         .style("opacity", "0")
-        .style("left", "-1000px");
+        .style("right", "-1000px");
     });
 }
 
