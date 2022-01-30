@@ -31,7 +31,7 @@ function initBarchartContainer(height: number, width: number) {
   return svgElement
     .append("g")
     .attr("id", "barchart-container")
-    .attr("transform", `translate(${margin * 3}, -${0})`);
+    .attr("transform", `translate(${margin * 3}, 10)`);
 }
 
 /**§
@@ -187,8 +187,9 @@ function createScales(
 
   const yScale = d3
     .scaleLinear()
-    .domain([0, Math.max(maxVaccinations, maxCases)])
-    .range([height - 200, 0]);
+    .domain([1, Math.max(maxVaccinations, maxCases)])
+    .range([height - 200, 0])
+    .nice();
 
   return [xScaleGroup, xScale, yScale];
 }
@@ -212,7 +213,14 @@ function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
     .attr("dx", "-.8em")
     .attr("dy", ".15em")
     .attr("transform", "rotate(-65)");
-  svg.append("g").attr("id", "yAxis").call(d3.axisLeft(yAxis));
+  svg
+    .append("g")
+    .attr("id", "yAxis")
+    .call(
+      d3.axisLeft(yAxis).tickFormat((d: any) => {
+        return `${d}`;
+      })
+    );
 }
 
 /**
@@ -236,7 +244,15 @@ function updateAxes(
     .attr("dx", "-.8em")
     .attr("dy", ".15em")
     .attr("transform", "rotate(-65)");
-  svg.selectAll("#yAxis").transition().duration(200).call(yAxis);
+  svg
+    .selectAll("#yAxis")
+    .transition()
+    .duration(200)
+    .call(
+      yAxis.tickFormat((d: any) => {
+        return `${d}`;
+      })
+    );
 }
 
 /**
