@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
-import { initBarchart } from "./model.barchart";
+import { initBarchart, updateBarchart } from "./model.barchart";
 import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
 
 export default function Barchart() {
@@ -16,6 +16,10 @@ export default function Barchart() {
       console.log("Barchart initialized");
     });
   }, []);
+
+  useLayoutEffect(() => {
+    updateBarchart(height, width, currentYear, dataSet);
+  }, [currentYear]);
 
   return (
     <>

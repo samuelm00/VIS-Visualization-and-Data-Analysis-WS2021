@@ -4,6 +4,7 @@ import {
   getBarchartData,
 } from "../../utils/utils.barchartAggregation";
 import { DataSetType } from "../../types/type.dataset";
+import { Axis, ScaleBand, ScaleLinear } from "d3";
 
 const margin = 20;
 const fields: (keyof BarchartData)[] = ["newCases", "newVaccinations"];
@@ -17,10 +18,11 @@ function initBarchartContainer(height: number, width: number) {
   const svgElement = d3.select("#barchart");
   return svgElement
     .append("g")
-    .attr("transform", `translate(${margin * 3}, -${margin - 10})`);
+    .attr("id", "barchart-container")
+    .attr("transform", `translate(${margin * 3}, -${0})`);
 }
 
-/**
+/**§
  *
  * @param height
  * @param width
@@ -51,12 +53,57 @@ export async function initBarchart(
   addAxes(svg, height, xAxisNames, yAxis);
   addYLabel(svg, height);
 
+  addBars(svg, sortedData, xAxisNames, xAxisFields, yAxis, height);
+}
+
+/**
+ *
+ * @param height
+ * @param width
+ * @param year
+ * @param dataSet
+ */
+export function updateBarchart(
+  height: number,
+  width: number,
+  year: number,
+  dataSet: DataSetType[]
+) {
+  const svg = d3.select("#barchart-container");
+  const data = getBarchartData(dataSet, year);
+  const sortedData = data
+    .sort(
+      (a, b) =>
+        b.newVaccinations + b.newCases - (a.newVaccinations + a.newCases)
+    )
+    .slice(0, 30);
+
+  const [xAxisNames, xAxisFields, yAxis] = createScales(
+    height,
+    width,
+    sortedData
+  );
+  updateAxes(svg, d3.axisBottom(xAxisNames), d3.axisLeft(yAxis));
+
+  svg.selectAll(".bar").remove();
+  addBars(svg, sortedData, xAxisNames, xAxisFields, yAxis, height);
+}
+
+function addBars(
+  svg: d3.Selection<any, unknown, HTMLElement, any>,
+  sortedData: BarchartData[],
+  xAxisNames: ScaleBand<string>,
+  xAxisFields: ScaleBand<string>,
+  yAxis: ScaleLinear<number, number, never>,
+  height: number
+) {
   svg
     .append("g")
     .selectAll("g")
     .data(sortedData)
     .enter()
     .append("g")
+    .attr("class", "bar")
     .attr("transform", (d) => {
       return "translate(" + xAxisNames(d.location) + ",-200)";
     })
@@ -73,7 +120,7 @@ export async function initBarchart(
     .attr("x", (d) => xAxisFields(d.key) || 0)
     .attr("y", (d) => yAxis(d.value))
     .attr("height", (d) => height - yAxis(d.value))
-    .attr("fill", (d) => (d.key === "newVaccinations" ? "#ff5724" : "#009485"))
+    .attr("fill", (d) => (d.key === "newVaccinations" ? "#009485" : "#ff5724"))
     .attr("width", () => xAxisFields.bandwidth())
     .on("mouseover", function (event, data) {
       d3.select(this).style("fill", "white");
@@ -87,7 +134,7 @@ export async function initBarchart(
     .on("mouseout", function (event, data) {
       d3.select(this).style(
         "fill",
-        data.key === "newVaccinations" ? "#ff5724" : "#009485"
+        data.key === "newVaccinations" ? "#009485" : "#ff5724"
       );
       d3.select("#barchart-tooltip")
         .style("opacity", "0")
@@ -143,6 +190,7 @@ function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
   svg
     .append("g")
     .attr("transform", `translate(0, ${height - 200})`)
+    .attr("id", "xAxis")
     .call(d3.axisBottom(xAxis))
     // code to rotate the labels from: https://stackoverflow.com/questions/20947488/d3-grouped-bar-chart-how-to-rotate-the-text-of-x-axis-ticks
     .selectAll("text")
@@ -150,7 +198,31 @@ function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
     .attr("dx", "-.8em")
     .attr("dy", ".15em")
     .attr("transform", "rotate(-65)");
-  svg.append("g").call(d3.axisLeft(yAxis));
+  svg.append("g").attr("id", "yAxis").call(d3.axisLeft(yAxis));
+}
+
+/**
+ *
+ * @param svg
+ * @param xAxis
+ * @param yAxis
+ */
+function updateAxes(
+  svg: any,
+  xAxis: Axis<any | { valueOf(): any }>,
+  yAxis: Axis<any | { valueOf(): any }>
+) {
+  svg
+    .selectAll("#xAxis")
+    .transition()
+    .duration(200)
+    .call(xAxis)
+    .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-65)");
+  svg.selectAll("#yAxis").transition().duration(200).call(yAxis);
 }
 
 /**

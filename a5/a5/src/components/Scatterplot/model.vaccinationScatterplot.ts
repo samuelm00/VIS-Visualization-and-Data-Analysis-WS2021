@@ -33,6 +33,7 @@ function initScatterPlotContainer(height: number, width: number) {
  *
  * @param height
  * @param width
+ * @param data
  * @param year
  * @param location
  */
