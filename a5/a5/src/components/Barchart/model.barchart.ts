@@ -239,6 +239,7 @@ function updateAxes(
     .transition()
     .duration(200)
     .call(xAxis)
+    // code to rotate the labels from: https://stackoverflow.com/questions/20947488/d3-grouped-bar-chart-how-to-rotate-the-text-of-x-axis-ticks
     .selectAll("text")
     .style("text-anchor", "end")
     .attr("dx", "-.8em")
