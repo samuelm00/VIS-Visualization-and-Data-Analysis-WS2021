@@ -132,7 +132,7 @@ function addBars(
     .append("rect")
     .attr("x", (d) => xAxisFields(d.key) || 0)
     .attr("y", (d) => yAxis(d.value))
-    .attr("height", (d) => height - 200 - yAxis(d.value))
+    .attr("height", (d) => height - 220 - yAxis(d.value))
     .attr("transform", "translate(0,200)")
     .attr("fill", (d) => (d.key === "newVaccinations" ? "#009485" : "#ff5724"))
     .attr("width", () => xAxisFields.bandwidth())
@@ -188,7 +188,7 @@ function createScales(
   const yScale = d3
     .scaleLinear()
     .domain([1, Math.max(maxVaccinations, maxCases)])
-    .range([height - 200, 0])
+    .range([height - 220, 0])
     .nice();
 
   return [xScaleGroup, xScale, yScale];
@@ -204,7 +204,7 @@ function createScales(
 function addAxes(svg: any, height: number, xAxis: any, yAxis: any) {
   svg
     .append("g")
-    .attr("transform", `translate(0, ${height - 200})`)
+    .attr("transform", `translate(0, ${height - 220})`)
     .attr("id", "xAxis")
     .call(d3.axisBottom(xAxis))
     // code to rotate the labels from: https://stackoverflow.com/questions/20947488/d3-grouped-bar-chart-how-to-rotate-the-text-of-x-axis-ticks
