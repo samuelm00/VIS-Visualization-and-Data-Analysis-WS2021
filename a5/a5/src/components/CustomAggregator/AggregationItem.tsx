@@ -53,7 +53,7 @@ export default function AggregationItem({
           <input
             name={"percentage"}
             type="text"
-            value={percentage}
+            value={percentageInput}
             onChange={onChange}
             max={100}
             min={0}
