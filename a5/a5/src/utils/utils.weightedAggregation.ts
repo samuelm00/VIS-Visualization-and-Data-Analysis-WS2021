@@ -122,7 +122,7 @@ export function getValue(
  * @param percentages
  * @param category
  */
-export async function getDatasetsForWeightedScatterPlot(
+export function getDatasetsForWeightedScatterPlot(
   year: number,
   data: DataSetType[],
   weights: AggregationProps,

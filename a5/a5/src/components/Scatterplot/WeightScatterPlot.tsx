@@ -1,6 +1,9 @@
 import React, { useLayoutEffect, useState } from "react";
 import { remToPixel } from "../../utils/utils.layout";
-import { initWeightedScatterPlot } from "./model.weightScatterplot";
+import {
+  initWeightedScatterPlot,
+  updateWeightedScatterPlot,
+} from "./model.weightScatterplot";
 import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
 
 export default React.memo(function WeightScatterPlot() {
@@ -40,6 +43,36 @@ export default React.memo(function WeightScatterPlot() {
       "People"
     );
   }, []);
+
+  useLayoutEffect(() => {
+    updateWeightedScatterPlot(
+      height,
+      width,
+      currentYear,
+      dataSet,
+      {
+        People: {
+          "People > 65": 1,
+          "Handwashing facilities": 1,
+          Smokers: 1,
+        },
+        Development: {
+          TBS: 1,
+        },
+      },
+      {
+        People: {
+          "People > 65": 1,
+          "Handwashing facilities": 1,
+          Smokers: 1,
+        },
+        Development: {
+          TBS: 1,
+        },
+      },
+      "People"
+    );
+  }, [currentYear]);
 
   return (
     <>

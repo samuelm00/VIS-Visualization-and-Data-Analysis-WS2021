@@ -102,6 +102,68 @@ export async function initWeightedScatterPlot(
  * @param height
  * @param width
  * @param year
+ * @param data
+ * @param weights
+ * @param percentages
+ * @param category
+ */
+export function updateWeightedScatterPlot(
+  height: number,
+  width: number,
+  year = 2020,
+  data: DataSetType[],
+  weights: AggregationProps,
+  percentages: AggregationProps,
+  category: keyof AggregationProps
+) {
+  const svg = d3.select("#plot");
+
+  const { totalCasesPerPopulation, scatterPlotData } =
+    getDatasetsForWeightedScatterPlot(
+      year,
+      data,
+      weights,
+      percentages,
+      category
+    );
+
+  const [xScale, yScale] = createScales(
+    height,
+    width,
+    year,
+    weights,
+    totalCasesPerPopulation,
+    category
+  );
+  const [xAxis, yAxis] = getAxes(xScale, yScale);
+
+  svg
+    .selectAll("#xAxis")
+    .transition()
+    .duration(200)
+    // @ts-ignore
+    .call(xAxis);
+  svg
+    .selectAll("#yAxis")
+    .transition()
+    .duration(200)
+    // @ts-ignore
+    .call(yAxis);
+
+  svg
+    .selectAll("circle")
+    .data(scatterPlotData)
+    .transition()
+    .duration(1000)
+    .attr("cx", (d) => xScale(d!.casesPerPopulation))
+    .attr("cy", (d) => yScale(d!.weight));
+}
+
+/**
+ *
+ * @param height
+ * @param width
+ * @param year
  * @param weights
  * @param casesPerPopulation
  * @param category
