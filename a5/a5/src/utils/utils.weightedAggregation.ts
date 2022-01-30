@@ -59,7 +59,6 @@ export function getWeightedData(
   percentages: AggregationProps,
   category: keyof AggregationProps
 ): WeightedData[] {
-  console.log(data);
   return data.map((d) => {
     const individualWeightsPercentages = Object.keys(weights[category]).map(
       (key) => {

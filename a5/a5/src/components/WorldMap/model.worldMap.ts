@@ -7,10 +7,7 @@ import {
   scaleThreshold,
 } from "d3";
 import { DataSetType } from "../../types/type.dataset";
-import {
-  CasesPerPopulationData,
-  getDatasetsForWeightedScatterPlot,
-} from "../../utils/utils.weightedAggregation";
+import { getDatasetsForWeightedScatterPlot } from "../../utils/utils.weightedAggregation";
 import { AggregationProps } from "../CustomAggregator/CustomAggregetor";
 import { AggregationCategory } from "../../provider/AggregationFilterProvider";
 
@@ -75,7 +72,11 @@ export async function initWorldMap(
     category
   );
 
-  const [xDomain, yDomain] = getThresholdDomain(scatterPlotData);
+  const [xDomain, yDomain] = getThresholdDomain(
+    weights,
+    scatterPlotData,
+    category
+  );
   const xColor = scaleThreshold().domain(xDomain).range(range(n));
   const yColor = scaleThreshold().domain(yDomain).range(range(n));
 
@@ -131,6 +132,16 @@ export async function initWorldMap(
     });
 }
 
+/**
+ *
+ * @param height
+ * @param width
+ * @param dataSet
+ * @param year
+ * @param weights
+ * @param percentages
+ * @param category
+ */
 export async function updateWorldMap(
   height: number,
   width: number,
@@ -153,7 +164,11 @@ export async function updateWorldMap(
     category
   );
 
-  const [xDomain, yDomain] = getThresholdDomain(scatterPlotData);
+  const [xDomain, yDomain] = getThresholdDomain(
+    weights,
+    scatterPlotData,
+    category
+  );
   const xColor = scaleThreshold().domain(xDomain).range(range(n));
   const yColor = scaleThreshold().domain(yDomain).range(range(n));
 
@@ -173,24 +188,48 @@ export async function updateWorldMap(
       }
       return "black";
     });
+
+  svg
+    .selectAll("path")
+    .data(geoData.features as any[])
+    .on("mouseover", function (event, data) {
+      const value = scatterPlotData.find(
+        (c) => c!.location.toLowerCase() === data.properties.name.toLowerCase()
+      );
+      select(this).attr("fill", "#ff5724");
+      select("#world-map-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(
+          `State: ${data.properties.name} <br> Cases-per-population: ${
+            value?.casesPerPopulation || "NO DATA"
+          } <br> Weight: ${value?.weight || "NO DATA"}`
+        );
+    });
 }
 
 /**
  *
+ * @param weights
  * @param data
+ * @param category
  */
 function getThresholdDomain(
+  weights: AggregationProps,
   data: ({
     location: string;
     weight: number;
     casesPerPopulation: number;
-  } | null)[]
+  } | null)[],
+  category: AggregationCategory
 ) {
-  const minWeight = Math.min(...data.map((d) => d!.weight));
-  const maxWeight = Math.max(...data.map((d) => d!.weight));
-  const minCasesPerPopulation = Math.min(
-    ...data.map((d) => d!.casesPerPopulation)
-  );
+  const weightArr = Object.values(weights[category]);
+  const minWeight = 0;
+  const maxWeight = weightArr.reduce((a, b) => a + b);
+
+  const minCasesPerPopulation = 0;
   const maxCasesPerPopulation = Math.max(
     ...data.map((d) => d!.casesPerPopulation)
   );
@@ -199,11 +238,11 @@ function getThresholdDomain(
   const y = [];
 
   for (let i = 1; i < 3; ++i) {
-    x.push(minWeight + i * ((maxWeight - minWeight) / 3));
-    y.push(
+    y.push(minWeight + i * ((maxWeight - minWeight) / 3));
+    x.push(
       minCasesPerPopulation +
         i * ((maxCasesPerPopulation - minCasesPerPopulation) / 3)
     );
   }
-  return [y, x];
+  return [x, y];
 }
