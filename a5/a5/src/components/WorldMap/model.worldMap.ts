@@ -108,10 +108,6 @@ export async function initWorldMap(
     category
   );
 
-  console.log(
-    scatterPlotData.sort((a, b) => a!.location.localeCompare(b!.location))
-  );
-
   const [xDomain, yDomain] = getThresholdDomain(
     weights,
     scatterPlotData,
@@ -255,7 +251,6 @@ function getFillColor(
     const y = yColor(value.weight);
     return getColor(x, y);
   }
-  console.log("no value", d.properties.name);
   return "black";
 }
 
