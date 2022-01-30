@@ -136,19 +136,7 @@ export function updateWeightedScatterPlot(
     category
   );
   const [xAxis, yAxis] = getAxes(xScale, yScale);
-
-  svg
-    .selectAll("#xAxis")
-    .transition()
-    .duration(200)
-    // @ts-ignore
-    .call(xAxis);
-  svg
-    .selectAll("#yAxis")
-    .transition()
-    .duration(200)
-    // @ts-ignore
-    .call(yAxis);
+  updateAxes(svg, xAxis, yAxis);
 
   svg
     .selectAll("circle")
@@ -239,6 +227,21 @@ export function addAxes(
     .attr("id", "xAxis")
     .call(xAxis);
   svg.append("g").attr("id", "yAxis").call(yAxis);
+}
+
+/**
+ *
+ * @param svg
+ * @param xAxis
+ * @param yAxis
+ */
+export function updateAxes(
+  svg: any,
+  xAxis: Axis<any | { valueOf(): any }>,
+  yAxis: Axis<any | { valueOf(): any }>
+) {
+  svg.selectAll("#xAxis").transition().duration(200).call(xAxis);
+  svg.selectAll("#yAxis").transition().duration(200).call(yAxis);
 }
 
 /**

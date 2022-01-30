@@ -47,7 +47,9 @@ function getNewVaccinationsPerPopulation(
         newVaccinationsPerPopulation: newVaccinations / d.population,
       };
     })
-    .filter((d) => d !== null) as VaccinationPerPopulation[];
+    .filter(
+      (d) => d !== null && !isNaN(d.newVaccinationsPerPopulation)
+    ) as VaccinationPerPopulation[];
 }
 
 /**
@@ -88,7 +90,7 @@ function getPositiveRateData(
  * @param data
  * @param year
  */
-export async function getVaccinationScatterPlotData(
+export function getVaccinationScatterPlotData(
   data: DataSetType[],
   year: number
 ) {
@@ -109,7 +111,7 @@ export async function getVaccinationScatterPlotData(
           newVaccinationsPerPopulationData.newVaccinationsPerPopulation,
       };
     })
-    .filter((d) => d !== null);
+    .filter((d) => d !== null && !isNaN(d.newVaccinationsPerPopulation));
   return {
     scatterPlotData,
     newVaccinationsPerPopulation,

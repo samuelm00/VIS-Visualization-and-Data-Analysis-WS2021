@@ -9,6 +9,7 @@ import {
   addLabels,
   getAxes,
   getScale,
+  updateAxes,
 } from "./model.weightScatterplot";
 import { DataSetType } from "../../types/type.dataset";
 
@@ -53,6 +54,7 @@ export async function initVaccinationScatterPlot(
     newVaccinationsPerPopulation,
     positiveRateData
   );
+
   const [xAxis, yAxis] = getAxes(xScale, yScale);
   addAxes(svg, height, xAxis, yAxis);
   addLabels(svg, height, width, "Vaccination/Population", "Positive Rate");
@@ -69,6 +71,66 @@ export async function initVaccinationScatterPlot(
     .attr("cy", (d) => yScale(d!.newVaccinationsPerPopulation))
     .attr("r", 5)
     .attr("fill", "black")
+    .on("mouseover", function (event, data) {
+      d3.select(this).style("fill", "red");
+      d3.select("#vaccination-scatter-tooltip")
+        .style("display", "block")
+        .style("opacity", 1)
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY + "px")
+        .html(
+          `State: ${data?.location} <br /> New-Vaccinations/Populatin: ${data?.newVaccinationsPerPopulation} <br /> Positiverate: ${data?.positiveRate}`
+        );
+    })
+    .on("mouseout", function (event, data) {
+      d3.select(this).style("fill", "black");
+      d3.select("#vaccination-scatter-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
+    });
+}
+
+export function updateVaccinationScatterPlot(
+  height: number,
+  width: number,
+  data: DataSetType[],
+  year = 2022,
+  location?: string
+) {
+  const svg = d3.select("#vaccination-plot");
+  const { newVaccinationsPerPopulation, positiveRateData, scatterPlotData } =
+    getVaccinationScatterPlotData(data, year);
+
+  console.log("datapoints", scatterPlotData.length);
+
+  const [xScale, yScale] = createScales(
+    height,
+    width,
+    newVaccinationsPerPopulation,
+    positiveRateData
+  );
+  const [xAxis, yAxis] = getAxes(xScale, yScale);
+  updateAxes(svg, xAxis, yAxis);
+
+  svg.select("#data-points").selectAll("circle").remove();
+
+  svg
+    .select("#data-points")
+    .selectAll("circle")
+    .data(scatterPlotData)
+    .enter()
+    .append("circle")
+    .transition()
+    .duration(1000)
+    .attr("cx", (d) => xScale(d!.positiveRate))
+    .attr("cy", (d) => yScale(d!.newVaccinationsPerPopulation))
+    .attr("r", 5)
+    .attr("fill", "black");
+
+  svg
+    .select("#data-points")
+    .selectAll("circle")
+    .data(scatterPlotData)
     .on("mouseover", function (event, data) {
       d3.select(this).style("fill", "red");
       d3.select("#vaccination-scatter-tooltip")
