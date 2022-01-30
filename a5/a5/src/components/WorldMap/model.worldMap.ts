@@ -93,7 +93,7 @@ export async function initWorldMap(
       );
       if (value) {
         const x = xColor(value.casesPerPopulation);
-        const y = yColor(value.casesPerPopulation);
+        const y = yColor(value.weight);
         return getColor(x, y);
       }
       return "black";
@@ -121,7 +121,7 @@ export async function initWorldMap(
       );
       if (value) {
         const x = xColor(value.casesPerPopulation);
-        const y = yColor(value.casesPerPopulation);
+        const y = yColor(value.weight);
         color = getColor(x, y);
       }
       select(this).attr("fill", color);
@@ -199,8 +199,8 @@ function getThresholdDomain(
   const y = [];
 
   for (let i = 1; i < 3; ++i) {
-    y.push(minWeight + i * ((maxWeight - minWeight) / 3));
-    x.push(
+    x.push(minWeight + i * ((maxWeight - minWeight) / 3));
+    y.push(
       minCasesPerPopulation +
         i * ((maxCasesPerPopulation - minCasesPerPopulation) / 3)
     );
