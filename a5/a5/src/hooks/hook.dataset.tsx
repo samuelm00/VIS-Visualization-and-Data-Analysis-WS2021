@@ -6,9 +6,6 @@ import { DataSetContext } from "../provider/DataSetProvider";
  */
 export function useDataSet() {
   const { dataSet } = useContext(DataSetContext);
-
-  console.log(dataSet);
-
   return dataSet;
 }
 

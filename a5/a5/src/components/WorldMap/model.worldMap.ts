@@ -67,20 +67,17 @@ export async function initWorldMap(
   const geoData: any = await json(
     "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
   );
-  const { totalCasesPerPopulation, scatterPlotData } =
-    getDatasetsForWeightedScatterPlot(
-      year,
-      dataSet,
-      weights,
-      percentages,
-      category
-    );
+  const { scatterPlotData } = getDatasetsForWeightedScatterPlot(
+    year,
+    dataSet,
+    weights,
+    percentages,
+    category
+  );
 
   const [xDomain, yDomain] = getThresholdDomain(scatterPlotData);
   const xColor = scaleThreshold().domain(xDomain).range(range(n));
   const yColor = scaleThreshold().domain(yDomain).range(range(n));
-
-  //const countryName = feature.properties.name.toLowerCase();
 
   svg
     .append("g")
@@ -102,13 +99,20 @@ export async function initWorldMap(
       return "black";
     })
     .on("mouseover", function (event, data) {
+      const value = scatterPlotData.find(
+        (c) => c!.location.toLowerCase() === data.properties.name.toLowerCase()
+      );
       select(this).attr("fill", "#ff5724");
       select("#world-map-tooltip")
         .style("display", "block")
         .style("opacity", 1)
         .style("left", event.pageX + 5 + "px")
         .style("top", event.pageY + "px")
-        .html(`State: ${data.properties.name}`);
+        .html(
+          `State: ${data.properties.name} <br> Cases-per-population: ${
+            value?.casesPerPopulation || "NO DATA"
+          } <br> Weight: ${value?.weight || "NO DATA"}`
+        );
     })
     .on("mouseout", function (_, d) {
       let color = "black";
@@ -164,7 +168,7 @@ export async function updateWorldMap(
       );
       if (value) {
         const x = xColor(value.casesPerPopulation);
-        const y = yColor(value.casesPerPopulation);
+        const y = yColor(value.weight);
         return getColor(x, y);
       }
       return "black";

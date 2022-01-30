@@ -16,21 +16,21 @@ function App() {
     <DataSetProvider>
       <PageLayout>
         <Header variant={"page"}>COVID-19 Dashboard</Header>
-        <WorldMap />
-        <Card>
-          <div className={"flex justify-center items-center space-x-10"}>
-            <h3 className={"text font-bold"}>Year:</h3>
-            <Slider />
-          </div>
-        </Card>
-        <div className="flex justify-between">
-          <AggregationFilterProvider>
+        <AggregationFilterProvider>
+          <WorldMap />
+          <Card>
+            <div className={"flex justify-center items-center space-x-10"}>
+              <h3 className={"text font-bold"}>Year:</h3>
+              <Slider />
+            </div>
+          </Card>
+          <div className="flex justify-between">
             <Card className={"w-1/2"}>
               <CustomAggregator />
             </Card>
             <WeightScatterPlot />
-          </AggregationFilterProvider>
-        </div>
+          </div>
+        </AggregationFilterProvider>
         <div className="flex justify-between">
           <div className={"w-1/2"}>
             <VaccinationScatterPlot />
