@@ -39,9 +39,9 @@ export default function CustomAggregator() {
       </div>
       <div className={"w-full space-y-2"}>
         <h2>Weights/Percentages: </h2>
-        {Object.keys(weights[currentCategory]).map((key, index) => (
+        {Object.keys(weights[currentCategory]).map((key) => (
           <AggregationItem
-            key={index}
+            key={key}
             label={key}
             // @ts-ignore
             weight={weights[currentCategory][key]}
