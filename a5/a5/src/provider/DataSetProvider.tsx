@@ -15,13 +15,13 @@ export interface DataSetProviderState {
 
 export const DataSetContext = React.createContext<DataSetProviderState>({
   dataSet: [],
-  currentYear: 2020,
+  currentYear: 2021,
   setCurrentYear: () => {},
 });
 
 export default function DataSetProvider({ children }: DataSetProviderProps) {
   const [dataset, setDataset] = useState<DataSetType[]>([]);
-  const [currentYear, setCurrentYear] = useState(2020);
+  const [currentYear, setCurrentYear] = useState(2021);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
