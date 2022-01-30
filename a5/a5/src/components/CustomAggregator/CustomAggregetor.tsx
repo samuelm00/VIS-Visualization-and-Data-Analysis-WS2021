@@ -12,7 +12,8 @@ export interface AggregationProps {
     Smokers: number;
   };
   Development: {
-    TBS: number;
+    "Diabetes Prevalence": number;
+    "Extreme Poverty": number;
   };
 }
 

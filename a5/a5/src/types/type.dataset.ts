@@ -5,6 +5,8 @@ export interface DataSetType {
   male_smokers?: number;
   female_smokers?: number;
   population: number;
+  extreme_poverty?: number;
+  diabetes_prevalence?: number;
   data: TimeDataMeasurements[];
 }
 

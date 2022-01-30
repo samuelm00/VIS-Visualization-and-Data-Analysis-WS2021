@@ -61,7 +61,8 @@ function getDefaultWeights(): AggregationProps {
       Smokers: 1,
     },
     Development: {
-      TBS: 0,
+      "Diabetes Prevalence": 1,
+      "Extreme Poverty": 1,
     },
   };
 }
@@ -74,7 +75,8 @@ function getDefaultPercentages(): AggregationProps {
       Smokers: 0,
     },
     Development: {
-      TBS: 0,
+      "Diabetes Prevalence": 0,
+      "Extreme Poverty": 0,
     },
   };
 }

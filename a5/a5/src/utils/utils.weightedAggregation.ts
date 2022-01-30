@@ -59,6 +59,7 @@ export function getWeightedData(
   percentages: AggregationProps,
   category: keyof AggregationProps
 ): WeightedData[] {
+  console.log(data);
   return data.map((d) => {
     const individualWeightsPercentages = Object.keys(weights[category]).map(
       (key) => {
@@ -71,8 +72,7 @@ export function getWeightedData(
     );
     const totalWeight = individualWeightsPercentages.reduce(
       (acc, curr) =>
-        acc +
-        getWeight(curr.weight, curr.percentage, getValue(d, curr.key, year)),
+        acc + getWeight(curr.weight, curr.percentage, getValue(d, curr.key)),
       0
     );
     return {
@@ -99,17 +99,19 @@ export function getWeight(weight: number, percentage: number, value?: number) {
  * @param value
  * @param key
  */
-export function getValue(
-  value: DataSetType,
-  key: string,
-  year: number
-): number {
+export function getValue(value: DataSetType, key: string): number {
   // TODO: ADD MISSING KEYS
   if (key.toLowerCase().includes("people")) {
     return value.aged_65_older || 0;
   }
   if (key.toLowerCase().includes("smokers")) {
     return (value.female_smokers || 0) + (value.male_smokers || 0);
+  }
+  if (key.toLowerCase().includes("poverty")) {
+    return value.extreme_poverty || 0;
+  }
+  if (key.toLowerCase().includes("diabetes")) {
+    return value.diabetes_prevalence || 0;
   }
   return 0;
 }
