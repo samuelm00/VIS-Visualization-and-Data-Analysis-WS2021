@@ -6,6 +6,7 @@ import {
   getDatasetsForWeightedScatterPlot,
 } from "../../utils/utils.weightedAggregation";
 import { DataSetType } from "../../types/type.dataset";
+import { colors, getColor } from "../WorldMap/model.worldMap";
 
 const margin = 20;
 
@@ -44,6 +45,7 @@ export function initWeightedScatterPlot(
 ) {
   initScatterPlotContainer(height, width);
   const svg = d3.select("#plot");
+  addColorGrid("plot", [height, width]);
 
   const { totalCasesPerPopulation, scatterPlotData } =
     getDatasetsForWeightedScatterPlot(
@@ -278,4 +280,28 @@ export function addLabels(
     .attr("text-anchor", "start")
     .attr("class", "text-xs")
     .text(yLabel);
+}
+
+/**
+ *
+ * @param plotId
+ * @param svgSize
+ */
+function addColorGrid(plotId: string, svgSize: [number, number]) {
+  const size = Math.floor(Math.sqrt(colors.length));
+  const [height, width] = svgSize;
+  const svg = d3.select(`#${plotId}`);
+  const range = d3.range(size);
+  const baseGrid = d3.cross(range, range);
+  svg
+    .append("g")
+    .selectAll("rect")
+    .data(baseGrid)
+    .enter()
+    .append("rect")
+    .attr("height", (height - margin * 2) / size)
+    .attr("width", (width - margin * 2) / size)
+    .attr("x", ([x]) => (x * (width - margin * 2)) / size)
+    .attr("y", ([, y]) => ((size - 1 - y) * (height - margin * 2)) / size)
+    .attr("fill", ([x, y]) => getColor(x, y));
 }

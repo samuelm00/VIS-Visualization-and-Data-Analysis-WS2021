@@ -99,7 +99,6 @@ export async function initWorldMap(
         const y = yColor(value.casesPerPopulation);
         return getColor(x, y);
       }
-      console.log("no value for", d.properties.name);
       return "black";
     })
     .on("mouseover", function (event, data) {
