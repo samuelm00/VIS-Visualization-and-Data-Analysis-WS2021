@@ -5,6 +5,7 @@ import {
   geoEquirectangular,
   range,
   scaleThreshold,
+  ScaleThreshold,
 } from "d3";
 import { DataSetType } from "../../types/type.dataset";
 import { getDatasetsForWeightedScatterPlot } from "../../utils/utils.weightedAggregation";
@@ -27,6 +28,41 @@ export const colorGrid = [
   colors.slice(0, 3),
   colors.slice(3, 6),
   colors.slice(6, 9),
+];
+
+const locationsNotCaptured = [
+  {
+    name: "USA",
+    value: "United States",
+  },
+  {
+    name: "Republic of Serbia",
+    value: "Serbia",
+  },
+  {
+    name: "Democratic Republic of the Congo",
+    value: "Congo",
+  },
+  {
+    name: "Republic of the Congo",
+    value: "Congo",
+  },
+  {
+    name: "The Bahamas",
+    value: "Bahamas",
+  },
+  {
+    name: "United Republic of Tanzania",
+    value: "Tanzania",
+  },
+  {
+    name: "England",
+    value: "United Kingdom",
+  },
+  {
+    name: "Czech Republic",
+    value: "Czechia",
+  },
 ];
 
 const n = Math.floor(Math.sqrt(colors.length));
@@ -72,6 +108,10 @@ export async function initWorldMap(
     category
   );
 
+  console.log(
+    scatterPlotData.sort((a, b) => a!.location.localeCompare(b!.location))
+  );
+
   const [xDomain, yDomain] = getThresholdDomain(
     weights,
     scatterPlotData,
@@ -89,15 +129,7 @@ export async function initWorldMap(
     .attr("d", path)
     .attr("stroke", "#3d4451")
     .attr("fill", (d) => {
-      const value = scatterPlotData.find(
-        (c) => c!.location.toLowerCase() === d.properties.name.toLowerCase()
-      );
-      if (value) {
-        const x = xColor(value.casesPerPopulation);
-        const y = yColor(value.weight);
-        return getColor(x, y);
-      }
-      return "black";
+      return getFillColor(scatterPlotData, d, xColor, yColor);
     })
     .on("mouseover", function (event, data) {
       const value = scatterPlotData.find(
@@ -116,15 +148,7 @@ export async function initWorldMap(
         );
     })
     .on("mouseout", function (_, d) {
-      let color = "black";
-      const value = scatterPlotData.find(
-        (c) => c!.location.toLowerCase() === d.properties.name.toLowerCase()
-      );
-      if (value) {
-        const x = xColor(value.casesPerPopulation);
-        const y = yColor(value.weight);
-        color = getColor(x, y);
-      }
+      const color = getFillColor(scatterPlotData, d, xColor, yColor);
       select(this).attr("fill", color);
       select("#world-map-tooltip")
         .style("opacity", "0")
@@ -178,15 +202,7 @@ export async function updateWorldMap(
     .transition()
     .duration(200)
     .attr("fill", (d) => {
-      const value = scatterPlotData.find(
-        (c) => c!.location.toLowerCase() === d.properties.name.toLowerCase()
-      );
-      if (value) {
-        const x = xColor(value.casesPerPopulation);
-        const y = yColor(value.weight);
-        return getColor(x, y);
-      }
-      return "black";
+      return getFillColor(scatterPlotData, d, xColor, yColor);
     });
 
   svg
@@ -208,6 +224,39 @@ export async function updateWorldMap(
           } <br> Weight: ${value?.weight || "NO DATA"}`
         );
     });
+}
+
+/**
+ *
+ * @param scatterPlotData
+ * @param d
+ * @param xColor
+ * @param yColor
+ */
+function getFillColor(
+  scatterPlotData: ({
+    casesPerPopulation: number;
+    weight: number;
+    location: string;
+  } | null)[],
+  d: any,
+  xColor: ScaleThreshold<number, number, never>,
+  yColor: ScaleThreshold<number, number, never>
+) {
+  const value = scatterPlotData.find((c) => {
+    const notCapturedValue = locationsNotCaptured.find(
+      (loc) => loc.name === d.properties.name
+    );
+    const name = notCapturedValue ? notCapturedValue.value : d.properties.name;
+    return c!.location.toLowerCase() === name.toLowerCase();
+  });
+  if (value) {
+    const x = xColor(value.casesPerPopulation);
+    const y = yColor(value.weight);
+    return getColor(x, y);
+  }
+  console.log("no value", d.properties.name);
+  return "black";
 }
 
 /**
