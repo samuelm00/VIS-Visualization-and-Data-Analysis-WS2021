@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Select from "../Select/Select";
 import AggregationItem from "./AggregationItem";
+import { useCustomAggregation } from "../../hooks/hook.aggregation";
 
 const categories = ["People", "Development"];
 
@@ -16,30 +17,14 @@ export interface AggregationProps {
 }
 
 export default function CustomAggregator() {
-  const [currentCategory, setCurrentCategory] = useState<
-    "People" | "Development"
-  >("People");
-  const [weights, setWeights] = useState<AggregationProps>({
-    People: {
-      "People > 65": 1,
-      "Handwashing facilities": 1,
-      Smokers: 1,
-    },
-    Development: {
-      TBS: 1,
-    },
-  });
-
-  const [percentages, setPercentages] = useState<AggregationProps>({
-    People: {
-      "People > 65": 0,
-      "Handwashing facilities": 0,
-      Smokers: 0,
-    },
-    Development: {
-      TBS: 0,
-    },
-  });
+  const {
+    setCurrentCategory,
+    currentCategory,
+    setPercentages,
+    percentages,
+    weights,
+    setWeights,
+  } = useCustomAggregation();
 
   return (
     <div className={"space-y-8"}>

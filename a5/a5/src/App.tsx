@@ -9,6 +9,7 @@ import WeightScatterPlot from "./components/Scatterplot/WeightScatterPlot";
 import VaccinationScatterPlot from "./components/Scatterplot/VaccinationScatterPlot";
 import Barchart from "./components/Barchart/Barchart";
 import DataSetProvider from "./provider/DataSetProvider";
+import AggregationFilterProvider from "./provider/AggregationFilterProvider";
 
 function App() {
   return (
@@ -23,10 +24,12 @@ function App() {
           </div>
         </Card>
         <div className="flex justify-between">
-          <Card className={"w-1/2"}>
-            <CustomAggregator />
-          </Card>
-          <WeightScatterPlot />
+          <AggregationFilterProvider>
+            <Card className={"w-1/2"}>
+              <CustomAggregator />
+            </Card>
+            <WeightScatterPlot />
+          </AggregationFilterProvider>
         </div>
         <div className="flex justify-between">
           <div className={"w-1/2"}>

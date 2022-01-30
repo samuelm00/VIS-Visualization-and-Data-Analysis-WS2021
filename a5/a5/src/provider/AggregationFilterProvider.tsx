@@ -5,11 +5,15 @@ interface AggregationFilterProvider {
   children: React.ReactNode;
 }
 
+type AggregationCategory = "People" | "Development";
+
 interface AggregationFilterContextState {
   weights: AggregationProps;
   percentages: AggregationProps;
   setWeights: (weights: AggregationProps) => void;
   setPercentages: (percentages: AggregationProps) => void;
+  currentCategory: AggregationCategory;
+  setCurrentCategory: (category: AggregationCategory) => void;
 }
 
 export const AggregationFilterContext =
@@ -18,6 +22,8 @@ export const AggregationFilterContext =
     percentages: getDefaultPercentages(),
     setWeights: () => {},
     setPercentages: () => {},
+    currentCategory: "People",
+    setCurrentCategory: () => {},
   });
 
 export default function AggregationFilterProvider({
@@ -25,6 +31,8 @@ export default function AggregationFilterProvider({
 }: AggregationFilterProvider) {
   const [weights, setWeights] = useState(getDefaultWeights());
   const [percentages, setPercentages] = useState(getDefaultPercentages());
+  const [currentCategory, setCurrentCategory] =
+    useState<AggregationCategory>("People");
 
   return (
     <AggregationFilterContext.Provider
@@ -33,6 +41,8 @@ export default function AggregationFilterProvider({
         percentages,
         setWeights,
         setPercentages,
+        currentCategory,
+        setCurrentCategory,
       }}
     >
       {children}

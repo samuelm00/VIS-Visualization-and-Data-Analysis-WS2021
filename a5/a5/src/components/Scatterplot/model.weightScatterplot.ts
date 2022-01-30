@@ -28,11 +28,12 @@ function initScatterPlotContainer(height: number, width: number) {
  * @param height
  * @param width
  * @param year
+ * @param data
  * @param weights
  * @param percentages
  * @param category
  */
-export async function initWeightedScatterPlot(
+export function initWeightedScatterPlot(
   height: number,
   width: number,
   year = 2020,
@@ -45,7 +46,7 @@ export async function initWeightedScatterPlot(
   const svg = d3.select("#plot");
 
   const { totalCasesPerPopulation, scatterPlotData } =
-    await getDatasetsForWeightedScatterPlot(
+    getDatasetsForWeightedScatterPlot(
       year,
       data,
       weights,

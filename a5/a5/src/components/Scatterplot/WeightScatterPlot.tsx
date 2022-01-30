@@ -5,8 +5,10 @@ import {
   updateWeightedScatterPlot,
 } from "./model.weightScatterplot";
 import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
+import { useCustomAggregation } from "../../hooks/hook.aggregation";
 
 export default React.memo(function WeightScatterPlot() {
+  const { currentCategory, percentages, weights } = useCustomAggregation();
   const { currentYear } = useCurrentYear();
   const dataSet = useDataSet();
   const [height] = useState(516);
@@ -20,27 +22,9 @@ export default React.memo(function WeightScatterPlot() {
       width,
       currentYear,
       dataSet,
-      {
-        People: {
-          "People > 65": 1,
-          "Handwashing facilities": 1,
-          Smokers: 1,
-        },
-        Development: {
-          TBS: 1,
-        },
-      },
-      {
-        People: {
-          "People > 65": 1,
-          "Handwashing facilities": 1,
-          Smokers: 1,
-        },
-        Development: {
-          TBS: 1,
-        },
-      },
-      "People"
+      weights,
+      percentages,
+      currentCategory
     );
   }, []);
 
@@ -50,27 +34,9 @@ export default React.memo(function WeightScatterPlot() {
       width,
       currentYear,
       dataSet,
-      {
-        People: {
-          "People > 65": 1,
-          "Handwashing facilities": 1,
-          Smokers: 1,
-        },
-        Development: {
-          TBS: 1,
-        },
-      },
-      {
-        People: {
-          "People > 65": 1,
-          "Handwashing facilities": 1,
-          Smokers: 1,
-        },
-        Development: {
-          TBS: 1,
-        },
-      },
-      "People"
+      weights,
+      percentages,
+      currentCategory
     );
   }, [currentYear]);
 
