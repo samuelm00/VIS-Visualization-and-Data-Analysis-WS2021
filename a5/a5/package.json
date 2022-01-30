@@ -2,6 +2,7 @@
   "name": "a5",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/~samuelm00/VIS21W/A5",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",

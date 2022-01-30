@@ -1,8 +1,11 @@
 import { json } from "d3";
 import { DataSetType, TimeDataMeasurements } from "../types/type.dataset";
 
+const BASE = "/~samuelm00/VIS21W/A5/data";
+
 export async function getDataset(): Promise<DataSetType[]> {
-  const data: any = await json("/owid-covid-data.json");
+  const base = window.location.href.includes("localhost") ? "" : BASE;
+  const data: any = await json(`${base}/owid-covid-data.json`);
   if (!data) throw Error("No data");
   const dataArr = Object.keys(data).map((key) => ({ ...data[key] }));
   return dataArr as DataSetType[];
