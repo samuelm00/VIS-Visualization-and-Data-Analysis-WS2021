@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Tooltip from "../Tooltip/Tooltip";
+import { lab } from "d3";
 
 interface AggregationItemProps {
   label: string;
@@ -35,32 +37,40 @@ export default function AggregationItem({
   return (
     <div className="flex items-center space-x-5 bg-base-100 rounded-lg p-2">
       <h3 className={"font-bold w-[200px]"}>{label}</h3>
-      <div className="form-control">
-        <label className="input-group input-group-vertical">
-          <span className={"bg-base-200"}>{"Weight: "}</span>
-          <input
-            name={"weight"}
-            type="text"
-            value={weightInput}
-            onChange={onChange}
-            className="input input-bordered"
-          />
-        </label>
-      </div>
-      <div className="form-control">
-        <label className="input-group input-group-vertical">
-          <span className={"bg-base-200"}>{"Above: "}</span>
-          <input
-            name={"percentage"}
-            type="text"
-            value={percentageInput}
-            onChange={onChange}
-            max={100}
-            min={0}
-            className="input input-bordered"
-          />
-        </label>
-      </div>
+      <Tooltip
+        text={`Weight that is added when the percentage of "${label}" is greater than "Above"`}
+      >
+        <div className="form-control">
+          <label className="input-group input-group-vertical">
+            <span className={"bg-base-200"}>{"Weight: "}</span>
+            <input
+              name={"weight"}
+              type="text"
+              value={weightInput}
+              onChange={onChange}
+              className="input input-bordered"
+            />
+          </label>
+        </div>
+      </Tooltip>
+      <Tooltip
+        text={`Specifies at what percentage the weight is added. Eg. if the percentage is set to 50, the weight is added when the percentage of "${label}" is greater than 50.`}
+      >
+        <div className="form-control">
+          <label className="input-group input-group-vertical">
+            <span className={"bg-base-200"}>{"Above: "}</span>
+            <input
+              name={"percentage"}
+              type="text"
+              value={percentageInput}
+              onChange={onChange}
+              max={100}
+              min={0}
+              className="input input-bordered"
+            />
+          </label>
+        </div>
+      </Tooltip>
     </div>
   );
 }
