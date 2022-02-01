@@ -101,7 +101,8 @@ export function updateWeightedScatterPlot(
   data: DataSetType[],
   weights: AggregationProps,
   percentages: AggregationProps,
-  category: keyof AggregationProps
+  category: keyof AggregationProps,
+  currentLocation: string
 ) {
   const svg = d3.select("#plot");
 
@@ -140,9 +141,14 @@ export function updateWeightedScatterPlot(
     .attr("cx", (d) => xScale(d!.casesPerPopulation))
     .attr("cy", (d) => yScale(d!.weight))
     .attr("r", 5)
-    .attr("fill", "black");
+    .attr("fill", (d) => {
+      if (d?.location === currentLocation) {
+        return "#ff5724";
+      }
+      return "black";
+    });
 
-  addHoverEffect(svg, scatterPlotData);
+  addHoverEffect(svg, scatterPlotData, currentLocation);
 }
 
 /**
@@ -156,13 +162,14 @@ function addHoverEffect(
     location: string;
     weight: number;
     casesPerPopulation: number;
-  } | null)[]
+  } | null)[],
+  location?: string
 ) {
   svg
     .selectAll("circle")
     .data(scatterPlotData)
     .on("mouseover", function (event, data) {
-      d3.select(this).style("fill", "red");
+      d3.select(this).style("fill", "#ff5724");
       d3.select("#scatter-tooltip")
         .style("display", "block")
         .style("opacity", 1)
@@ -173,7 +180,9 @@ function addHoverEffect(
         );
     })
     .on("mouseout", function (event, data) {
-      d3.select(this).style("fill", "black");
+      if (location !== data?.location) {
+        d3.select(this).style("fill", "black");
+      }
       d3.select("#scatter-tooltip")
         .style("opacity", "0")
         .style("right", "-1000px");
