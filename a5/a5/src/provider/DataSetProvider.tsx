@@ -25,10 +25,15 @@ export default function DataSetProvider({ children }: DataSetProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getDataset().then((dataSet) => {
-      setDataset(dataSet);
-      setIsLoading(false);
-    });
+    getDataset()
+      .then((dataSet) => {
+        setDataset(dataSet);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
   }, []);
 
   if (isLoading) {
