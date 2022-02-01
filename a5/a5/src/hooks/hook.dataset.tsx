@@ -16,3 +16,11 @@ export function useCurrentYear() {
   const { currentYear, setCurrentYear } = useContext(DataSetContext);
   return { currentYear, setCurrentYear };
 }
+
+/**
+ *
+ */
+export function useCurrentLocation() {
+  const { currentLocation, setCurrentLocation } = useContext(DataSetContext);
+  return { currentLocation, setCurrentLocation };
+}

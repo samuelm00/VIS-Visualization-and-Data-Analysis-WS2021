@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Autosuggest from "react-autosuggest";
-import { useDataSet } from "../../hooks/hook.dataset";
+import { useCurrentLocation, useDataSet } from "../../hooks/hook.dataset";
 
 export default function LocationAutocomplete() {
   const dataSet = useDataSet();
+  const { currentLocation, setCurrentLocation } = useCurrentLocation();
   const [value, setValue] = useState("");
   const [locations] = useState<{ name: string }[]>(
     dataSet.map((d) => ({ name: d.location }))
@@ -25,6 +26,9 @@ export default function LocationAutocomplete() {
     event: React.FormEvent<HTMLElement>,
     { newValue }: Autosuggest.ChangeEvent
   ) => {
+    if (!newValue.length) {
+      setCurrentLocation("");
+    }
     setValue(newValue);
   };
 
@@ -45,6 +49,10 @@ export default function LocationAutocomplete() {
       suggestions={filteredLocations}
       onSuggestionsFetchRequested={onSuggestionsFetchRequested}
       onSuggestionsClearRequested={onSuggestionsClearRequested}
+      onSuggestionSelected={(event, { suggestion }) => {
+        setCurrentLocation(suggestion.name);
+        setValue(suggestion.name);
+      }}
       getSuggestionValue={(value) => value.name}
       renderSuggestion={renderSuggestion}
       inputProps={{ value, onChange, className: "input input-bordered" }}

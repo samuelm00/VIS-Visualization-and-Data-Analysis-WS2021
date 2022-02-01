@@ -11,18 +11,25 @@ export interface DataSetProviderState {
   dataSet: DataSetType[];
   currentYear: number;
   setCurrentYear: (year: number) => void;
+  currentLocation: string;
+  setCurrentLocation: (location: string) => void;
 }
 
 export const DataSetContext = React.createContext<DataSetProviderState>({
   dataSet: [],
   currentYear: 2021,
   setCurrentYear: () => {},
+  currentLocation: "",
+  setCurrentLocation: () => {},
 });
 
 export default function DataSetProvider({ children }: DataSetProviderProps) {
+  const [currentLocation, setCurrentLocation] = useState<string>("");
   const [dataset, setDataset] = useState<DataSetType[]>([]);
   const [currentYear, setCurrentYear] = useState(2021);
   const [isLoading, setIsLoading] = useState(true);
+
+  console.log(currentLocation);
 
   useEffect(() => {
     getDataset()
@@ -46,7 +53,13 @@ export default function DataSetProvider({ children }: DataSetProviderProps) {
 
   return (
     <DataSetContext.Provider
-      value={{ dataSet: dataset, currentYear, setCurrentYear }}
+      value={{
+        dataSet: dataset,
+        currentYear,
+        setCurrentYear,
+        currentLocation,
+        setCurrentLocation,
+      }}
     >
       {children}
     </DataSetContext.Provider>
