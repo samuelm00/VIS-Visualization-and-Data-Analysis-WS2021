@@ -29,8 +29,6 @@ export default function DataSetProvider({ children }: DataSetProviderProps) {
   const [currentYear, setCurrentYear] = useState(2021);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(currentLocation);
-
   useEffect(() => {
     getDataset()
       .then((dataSet) => {

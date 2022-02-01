@@ -169,7 +169,8 @@ export async function updateWorldMap(
   year: number,
   weights: AggregationProps,
   percentages: AggregationProps,
-  category: AggregationCategory
+  category: AggregationCategory,
+  location: string
 ) {
   const svg = select("#world-map");
   const geoData: any = await json(
@@ -198,6 +199,9 @@ export async function updateWorldMap(
     .transition()
     .duration(200)
     .attr("fill", (d) => {
+      if (location === d.properties.name) {
+        return "#ff5724";
+      }
       return getFillColor(scatterPlotData, d, xColor, yColor);
     });
 
@@ -219,6 +223,15 @@ export async function updateWorldMap(
             value?.casesPerPopulation || "NO DATA"
           } <br> Weight: ${value?.weight || "NO DATA"}`
         );
+    })
+    .on("mouseout", function (_, d) {
+      const color = getFillColor(scatterPlotData, d, xColor, yColor);
+      if (location !== d.properties.name) {
+        select(this).attr("fill", color);
+      }
+      select("#world-map-tooltip")
+        .style("opacity", "0")
+        .style("left", "-1000px");
     });
 }
 

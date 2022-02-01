@@ -1,7 +1,11 @@
 import React, { useLayoutEffect, useState } from "react";
 import { initWorldMap, updateWorldMap } from "./model.worldMap";
 import { remToPixel } from "../../utils/utils.layout";
-import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
+import {
+  useCurrentLocation,
+  useCurrentYear,
+  useDataSet,
+} from "../../hooks/hook.dataset";
 import { useCustomAggregation } from "../../hooks/hook.aggregation";
 
 const padding = 16;
@@ -10,6 +14,7 @@ export default function WorldMap() {
   const dataSet = useDataSet();
   const { weights, percentages, currentCategory } = useCustomAggregation();
   const { currentYear } = useCurrentYear();
+  const { currentLocation } = useCurrentLocation();
   const [height] = useState(
     Math.min(window.innerHeight, 900) - remToPixel(padding)
   );
@@ -39,11 +44,12 @@ export default function WorldMap() {
       currentYear,
       weights,
       percentages,
-      currentCategory
+      currentCategory,
+      currentLocation
     ).then(() => {
       console.log("map finished drawing");
     });
-  }, [currentYear, currentCategory, weights, percentages]);
+  }, [currentYear, currentCategory, weights, percentages, currentLocation]);
 
   return (
     <div className={"flex justify-center"}>
