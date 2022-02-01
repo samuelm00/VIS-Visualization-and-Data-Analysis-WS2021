@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import Autosuggest from "react-autosuggest";
 import { useCurrentLocation, useDataSet } from "../../hooks/hook.dataset";
+import { excludedLocations } from "../Barchart/model.barchart";
 
 export default function LocationAutocomplete() {
   const dataSet = useDataSet();
   const { currentLocation, setCurrentLocation } = useCurrentLocation();
   const [value, setValue] = useState("");
   const [locations] = useState<{ name: string }[]>(
-    dataSet.map((d) => ({ name: d.location }))
+    dataSet
+      .filter((d) => !excludedLocations.includes(d.location))
+      .map((d) => ({ name: d.location }))
   );
   const [filteredLocations, setFilteredLocations] = useState(locations);
 

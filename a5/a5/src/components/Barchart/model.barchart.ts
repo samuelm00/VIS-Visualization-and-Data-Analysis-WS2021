@@ -8,7 +8,7 @@ import { Axis, ScaleBand, ScaleLinear } from "d3";
 
 const margin = 20;
 const fields: (keyof BarchartData)[] = ["newCases", "newVaccinations"];
-const excludedLocations = [
+export const excludedLocations = [
   "World",
   "High income",
   "North America",
@@ -19,6 +19,7 @@ const excludedLocations = [
   "Lower middle income",
   "European Union",
   "South America",
+  "Africa",
 ];
 
 /**
