@@ -4,7 +4,7 @@ import {
   getBarchartData,
 } from "../../utils/utils.barchartAggregation";
 import { DataSetType } from "../../types/type.dataset";
-import { Axis, ScaleBand, ScaleLinear } from "d3";
+import { Axis, filter, ScaleBand, ScaleLinear } from "d3";
 
 const margin = 20;
 const fields: (keyof BarchartData)[] = ["newCases", "newVaccinations"];
@@ -80,10 +80,12 @@ export function updateBarchart(
   height: number,
   width: number,
   year: number,
-  dataSet: DataSetType[]
+  dataSet: DataSetType[],
+  location: string
 ) {
   const svg = d3.select("#barchart-container");
   const data = getBarchartData(dataSet, year);
+  const filteredLocation = data.find((d) => d.location === location);
   const sortedData = data
     .filter((d) => !excludedLocations.includes(d.location))
     .sort(
@@ -92,15 +94,21 @@ export function updateBarchart(
     )
     .slice(0, 30);
 
+  const barchartData =
+    filteredLocation &&
+    !sortedData.find((d) => d.location === filteredLocation.location)
+      ? [...sortedData, filteredLocation]
+      : sortedData;
+
   const [xAxisNames, xAxisFields, yAxis] = createScales(
     height,
     width,
-    sortedData
+    barchartData
   );
   updateAxes(svg, d3.axisBottom(xAxisNames), d3.axisLeft(yAxis));
 
   svg.selectAll(".bar").remove();
-  addBars(svg, sortedData, xAxisNames, xAxisFields, yAxis, height);
+  addBars(svg, barchartData, xAxisNames, xAxisFields, yAxis, height);
 }
 
 function addBars(
