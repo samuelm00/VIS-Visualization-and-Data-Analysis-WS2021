@@ -89,7 +89,7 @@ export function updateVaccinationScatterPlot(
   width: number,
   data: DataSetType[],
   year = 2022,
-  location?: string
+  location: string
 ) {
   const svg = d3.select("#vaccination-plot");
   const { newVaccinationsPerPopulation, positiveRateData, scatterPlotData } =
@@ -117,9 +117,14 @@ export function updateVaccinationScatterPlot(
     .attr("cx", (d) => xScale(d!.positiveRate))
     .attr("cy", (d) => yScale(d!.newVaccinationsPerPopulation))
     .attr("r", 5)
-    .attr("fill", "black");
+    .attr("fill", (d) => {
+      if (d?.location === location) {
+        return "#ff5724";
+      }
+      return "black";
+    });
 
-  addHoverEffect(svg, scatterPlotData);
+  addHoverEffect(svg, scatterPlotData, location);
 }
 
 /**
@@ -163,6 +168,7 @@ function createScales(
  *
  * @param svg
  * @param scatterPlotData
+ * @param location
  */
 function addHoverEffect(
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
@@ -170,14 +176,15 @@ function addHoverEffect(
     positiveRate: number;
     location: string;
     newVaccinationsPerPopulation: number;
-  })[]
+  })[],
+  location?: string
 ) {
   svg
     .select("#data-points")
     .selectAll("circle")
     .data(scatterPlotData)
     .on("mouseover", function (event, data) {
-      d3.select(this).style("fill", "red");
+      d3.select(this).style("fill", "#ff5724");
       d3.select("#vaccination-scatter-tooltip")
         .style("display", "block")
         .style("opacity", 1)
@@ -188,7 +195,9 @@ function addHoverEffect(
         );
     })
     .on("mouseout", function (event, data) {
-      d3.select(this).style("fill", "black");
+      if (location !== data?.location) {
+        d3.select(this).style("fill", "black");
+      }
       d3.select("#vaccination-scatter-tooltip")
         .style("opacity", "0")
         .style("left", "-1000px");

@@ -4,11 +4,16 @@ import {
   initVaccinationScatterPlot,
   updateVaccinationScatterPlot,
 } from "./model.vaccinationScatterplot";
-import { useCurrentYear, useDataSet } from "../../hooks/hook.dataset";
+import {
+  useCurrentLocation,
+  useCurrentYear,
+  useDataSet,
+} from "../../hooks/hook.dataset";
 
 export default React.memo(function VaccinationScatterPlot() {
   const dataSet = useDataSet();
   const { currentYear } = useCurrentYear();
+  const { currentLocation } = useCurrentLocation();
   const [height] = useState(516);
   const [width] = useState(
     (Math.min(window.innerWidth, 1440) - remToPixel(16)) / 2
@@ -21,8 +26,14 @@ export default React.memo(function VaccinationScatterPlot() {
   }, []);
 
   useLayoutEffect(() => {
-    updateVaccinationScatterPlot(height, width, dataSet, currentYear);
-  }, [currentYear]);
+    updateVaccinationScatterPlot(
+      height,
+      width,
+      dataSet,
+      currentYear,
+      currentLocation
+    );
+  }, [currentYear, currentLocation]);
 
   return (
     <>
