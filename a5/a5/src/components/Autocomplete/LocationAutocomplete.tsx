@@ -5,19 +5,19 @@ import { useDataSet } from "../../hooks/hook.dataset";
 export default function LocationAutocomplete() {
   const dataSet = useDataSet();
   const [value, setValue] = useState("");
-  const [locations, setLocations] = useState<string[]>(
-    dataSet.map((d) => d.location)
+  const [locations] = useState<{ name: string }[]>(
+    dataSet.map((d) => ({ name: d.location }))
   );
-  const [filteredLocations, setFilteredLocations] = useState<string[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState(locations);
 
   const getSuggestions = (value: string) => {
     const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
 
-    return inputLength === 0
+    return inputValue.length === 0
       ? []
       : locations.filter(
-          (lang) => lang.toLowerCase().slice(0, inputLength) === inputValue
+          ({ name }) =>
+            name.toLowerCase().slice(0, inputValue.length) === inputValue
         );
   };
 
@@ -29,23 +29,25 @@ export default function LocationAutocomplete() {
   };
 
   const onSuggestionsFetchRequested = ({ value }: any) => {
-    setFilteredLocations(value);
+    setFilteredLocations(getSuggestions(value));
   };
 
   const onSuggestionsClearRequested = () => {
     setFilteredLocations([]);
   };
 
-  const renderSuggestion = (suggestion: string) => <div>{suggestion}</div>;
+  const renderSuggestion = (suggestion: { name: string }) => (
+    <div>{suggestion.name}</div>
+  );
 
   return (
     <Autosuggest
       suggestions={filteredLocations}
       onSuggestionsFetchRequested={onSuggestionsFetchRequested}
       onSuggestionsClearRequested={onSuggestionsClearRequested}
-      getSuggestionValue={(value) => value}
+      getSuggestionValue={(value) => value.name}
       renderSuggestion={renderSuggestion}
-      inputProps={{ value, onChange }}
+      inputProps={{ value, onChange, className: "input input-bordered" }}
     />
   );
 }

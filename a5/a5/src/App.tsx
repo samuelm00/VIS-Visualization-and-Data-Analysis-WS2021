@@ -10,6 +10,7 @@ import VaccinationScatterPlot from "./components/Scatterplot/VaccinationScatterP
 import Barchart from "./components/Barchart/Barchart";
 import DataSetProvider from "./provider/DataSetProvider";
 import AggregationFilterProvider from "./provider/AggregationFilterProvider";
+import LocationAutocomplete from "./components/Autocomplete/LocationAutocomplete";
 
 function App() {
   return (
@@ -19,9 +20,19 @@ function App() {
         <AggregationFilterProvider>
           <WorldMap />
           <Card>
-            <div className={"flex justify-center items-center space-x-10"}>
-              <h3 className={"text font-bold"}>Year:</h3>
-              <Slider />
+            <div className={"flex justify-center items-center space-x-21"}>
+              <div className="flex w-full space-x-10">
+                <div>
+                  <h3 className={"text font-bold"}>Location:</h3>
+                  <LocationAutocomplete />
+                </div>
+                <div className={"w-full h-full"}>
+                  <h3 className={"text font-bold"}>Year:</h3>
+                  <div className={"flex h-[50px] items-center"}>
+                    <Slider />
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
           <div className="flex justify-between">

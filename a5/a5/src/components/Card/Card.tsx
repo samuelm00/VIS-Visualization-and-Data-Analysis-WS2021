@@ -8,7 +8,7 @@ interface CardProps extends WithClassName {
 
 export default function Card({ children, className }: CardProps) {
   return (
-    <div className={clsx("card shadow-2xl bg-base-200", className)}>
+    <div className={clsx("rounded-xl shadow-2xl bg-base-200", className)}>
       <div className="card-body">{children}</div>
     </div>
   );
